@@ -9,7 +9,7 @@ create table arkivpost (
     tema varchar(255),
     arkivpostType varchar(255),
     dokumentType varchar(255),
-    kryssreferanseId number(19, 0),
+    kryssreferanseId varchar(255),
     kanal varchar(255),
     aktoerId varchar(255),
     fodselsnummer varchar(255),
