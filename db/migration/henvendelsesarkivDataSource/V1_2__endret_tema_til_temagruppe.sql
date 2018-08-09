@@ -1,0 +1,1 @@
+alter table arkivpost rename column tema to temagruppe;
