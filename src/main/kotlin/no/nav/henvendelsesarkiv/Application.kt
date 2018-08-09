@@ -24,21 +24,24 @@ class Application(private val port: Int = 7070) {
             }
             error(404) { ctx -> ctx.json("${ctx.url()} not found") }
         }.routes {
-
-            path("/fasitTest") {
-                get { ctx -> ctx.result(fasitProperties.appName) }
-            }
-
-            path("/isAlive") {
-                get { it.status(200) }
-            }
-
-            path("/isReady") {
-                get { it.status(200) }
-            }
+            setUpRoutes(fasitProperties)
         }.after {
             it.header("Server", "Henvendelsesarkiv")
         }.start()
+    }
+
+    private fun setUpRoutes(fasitProperties: FasitProperties) {
+        path("/fasitTest") {
+            get { ctx -> ctx.result(fasitProperties.appName) }
+        }
+
+        path("/isAlive") {
+            get { it.status(200) }
+        }
+
+        path("/isReady") {
+            get { it.status(200) }
+        }
     }
 
 }
