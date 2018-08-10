@@ -1,5 +1,6 @@
 name: henvendelsesarkiv
-image: repo.adeo.no:5443/henvendelsesarkiv
+image: navikt/henvendelsesarkiv
+team: oppfolging
 replicas:
     min: 2
     max: 2
