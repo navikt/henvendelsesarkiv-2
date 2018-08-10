@@ -1,5 +1,5 @@
-name: henvendelsesarkiv2
-image: repo.adeo.no:5443/henvendelsesarkiv2
+name: henvendelsesarkiv
+image: repo.adeo.no:5443/henvendelsesarkiv
 replicas:
     min: 2
     max: 2
@@ -23,5 +23,5 @@ resources:
       memory: 1536Mi
 fasitResources:
     used:
-      - alias: henvendelsearkiv
-        resourceType: Credential
+      - alias: henvendelsesarkivDataSource
+        resourceType: DataSource
