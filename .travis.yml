@@ -12,7 +12,7 @@ env:
   global:
     - TZ='Europe/Oslo'
     - RELEASE_VERSION="$(git fetch --unshallow || true && git rev-list --count $TRAVIS_COMMIT)"
-    - DOCKER_IMAGE_FULL_NAME="$TRAVIS_REPO_SLUG:$RELEASE_VERSION"
+    - DOCKER_IMAGE_FULL_NAME="navikt/henvendelsesarkiv:$RELEASE_VERSION"
 
 before_install:
   - chmod +x gradlew
@@ -20,6 +20,7 @@ before_install:
 
 script:
   - ./gradlew test build
+  - docker build -t "$DOCKER_IMAGE_FULL_NAME" .
 
 deploy:
   provider: script
