@@ -9,4 +9,4 @@ data class FasitProperties(
 )
 
 fun getEnvVar(name: String, default: String? = null): String =
-        System.getenv(name) ?: default ?: throw RuntimeException("Missing variable $name")
+        System.getenv(name) ?: System.getProperty(name) ?: default ?: throw RuntimeException("Missing variable $name")
