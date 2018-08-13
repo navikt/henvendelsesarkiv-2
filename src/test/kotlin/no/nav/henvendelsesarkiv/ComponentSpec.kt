@@ -12,6 +12,7 @@ object ComponentSpec: Spek({
     val url = "http://localhost:7070/"
 
     describe("Integration tests") {
+
         beforeGroup {
             System.setProperty("APP_NAME", APP_NAME)
             System.setProperty("APP_VERSION", "Version")
@@ -21,31 +22,32 @@ object ComponentSpec: Spek({
             app = Application().init()
         }
 
-        afterGroup {
-            app.stop()
-        }
-
         given("application successfully started") {
-            on("checking isAlive") {
-                it("answers with 200") {
+            on("NAIS healthcheck") {
+                it("isAlive answers with 200") {
                     val response = khttp.get(url + "isAlive")
                     response.statusCode `should equal` 200
                 }
             }
 
-            on("checking isReady") {
-                it("answers with 200") {
+            on("NAIS healthcheck") {
+                it("isReady answers with 200") {
                     val response = khttp.get(url + "isReady")
                     response.statusCode `should equal` 200
                 }
             }
 
             on("checking fasit properties") {
-                it("answers with app name") {
+                it("fasitTest answers with app name") {
                     val response = khttp.get(url + "fasitTest")
                     response.text `should equal` APP_NAME
                 }
             }
         }
+
+        afterGroup {
+            app.stop()
+        }
+
     }
 })
