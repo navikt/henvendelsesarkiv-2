@@ -12,8 +12,8 @@ env:
   global:
     - TZ='Europe/Oslo'
     - RELEASE_VERSION="$(git fetch --unshallow || true && git rev-list --count $TRAVIS_COMMIT)"
-    - DOCKER_IMAGE_FULL_NAME="navikt/henvendelsesarkiv:$RELEASE_VERSION"
     - APPLICATION_NAME='henvendelsesarkiv'
+    - DOCKER_IMAGE_FULL_NAME="navikt/$APPLICATION_NAME:$RELEASE_VERSION"
 
 before_install:
   - chmod +x gradlew
@@ -25,7 +25,8 @@ script:
 
 deploy:
   provider: script
-  script: docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD" && docker push "$DOCKER_IMAGE_FULL_NAME"
+  skip_cleanup: true
+  script: "./deploy.sh"
   on:
     branch: master
 

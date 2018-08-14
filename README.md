@@ -1,5 +1,5 @@
 # Henvendelsesarkiv
-Applikasjon som tar imot henvendelser og lagrer disse på Norark 5 standard.
+Applikasjon som tar imot henvendelser fra bruker via modia og lagrer disse.
 
 ## Henvendelser
 
