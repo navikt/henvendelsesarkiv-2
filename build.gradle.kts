@@ -66,7 +66,7 @@ tasks.withType<Wrapper> {
 }
 
 val fatJar = task("fatJar", type = Jar::class) {
-    baseName = "${project.name}-all"
+    baseName = "henvendelsesarkiv-all"
     manifest {
         attributes["Implementation-Title"] = "Henvendelsesarkiv"
         attributes["Main-Class"] = mainClass

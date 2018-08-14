@@ -13,14 +13,15 @@ env:
     - TZ='Europe/Oslo'
     - RELEASE_VERSION="$(git fetch --unshallow || true && git rev-list --count $TRAVIS_COMMIT)"
     - DOCKER_IMAGE_FULL_NAME="navikt/henvendelsesarkiv:$RELEASE_VERSION"
+    - APPLICATION_NAME='henvendelsesarkiv'
 
 before_install:
   - chmod +x gradlew
   - chmod +x gradle/wrapper/gradle-wrapper.jar
 
 script:
-  - ./gradlew test build
-  - docker build -t "$DOCKER_IMAGE_FULL_NAME" .
+  - ./gradlew clean test fatJar
+  - docker build --build-arg app_name="$APPLICATION_NAME" -t "$DOCKER_IMAGE_FULL_NAME" .
 
 deploy:
   provider: script

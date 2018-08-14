@@ -6,6 +6,7 @@ import org.jetbrains.spek.api.*
 import org.jetbrains.spek.api.dsl.*
 
 const val APP_NAME: String = "Application"
+const val APP_VERSION: String = "1.0"
 
 object ComponentSpec: Spek({
     lateinit var app: Javalin
@@ -15,7 +16,7 @@ object ComponentSpec: Spek({
 
         beforeGroup {
             System.setProperty("APP_NAME", APP_NAME)
-            System.setProperty("APP_VERSION", "Version")
+            System.setProperty("APP_VERSION", APP_VERSION)
             System.setProperty("HENVENDELSESARKIVDATASOURCE_URL", "jdbcUrl")
             System.setProperty("HENVENDELSESARKIVDATASOURCE_USERNAME", "jdbcUser")
             System.setProperty("HENVENDELSESARKIVDATASOURCE_PASSWORD", "jdbcPass")
@@ -23,14 +24,14 @@ object ComponentSpec: Spek({
         }
 
         given("application successfully started") {
-            on("NAIS healthcheck") {
+            on("NAIS healthcheck 1") {
                 it("isAlive answers with 200") {
                     val response = khttp.get(url + "isAlive")
                     response.statusCode `should equal` 200
                 }
             }
 
-            on("NAIS healthcheck") {
+            on("NAIS healthcheck 2") {
                 it("isReady answers with 200") {
                     val response = khttp.get(url + "isReady")
                     response.statusCode `should equal` 200
