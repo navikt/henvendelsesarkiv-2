@@ -35,6 +35,10 @@ class Application(private val port: Int = 7070) {
             get { ctx -> ctx.result(fasitProperties.appName) }
         }
 
+        path("/fasitJdbc") {
+            get { ctx -> ctx.result(fasitProperties.dbUsername) }
+        }
+
         path("/isAlive") {
             get { it.status(200) }
         }
