@@ -20,4 +20,4 @@ class ConnectionPool private constructor(fasit: FasitProperties) {
     companion object : SingletonHolder<ConnectionPool, FasitProperties>(::ConnectionPool)
 }
 
-val jdbcTemplate = JdbcTemplate(ConnectionPool.getInstance(FasitProperties()).dataSource)
+val hikariJdbcTemplate = JdbcTemplate(ConnectionPool.getInstance(FasitProperties()).dataSource)
