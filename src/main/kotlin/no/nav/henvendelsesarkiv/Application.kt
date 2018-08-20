@@ -32,11 +32,7 @@ class Application(private val port: Int = 7070) {
 
     private fun setUpRoutes(fasitProperties: FasitProperties) {
         path("/fasitTest") {
-            get { ctx -> ctx.result(fasitProperties.appName) }
-        }
-
-        path("/fasitJdbc") {
-            get { ctx -> ctx.result(fasitProperties.dbUsername) }
+            get { ctx -> "${ctx.result(fasitProperties.appName)} - ${ctx.result(fasitProperties.dbUsername)}" }
         }
 
         path("/isAlive") {
