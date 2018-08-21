@@ -23,13 +23,13 @@ private const val VEDLEGG_SQL = """
             )
             """
 
-class Database constructor(private val jt: JdbcTemplate, private val useHsql: Boolean = false) {
+class DatabaseService constructor(private val jt: JdbcTemplate, private val useHsql: Boolean = false) {
 
     fun hentHenvendelse(id: Long): Arkivpost? {
         val arkivpostSql = "SELECT * FROM arkivpost WHERE arkivpostId = ?"
         val vedleggSql = "SELECT * FROM vedlegg WHERE arkivpostId = ?"
         val arkivpost = jt.queryForObject(arkivpostSql, ArkivpostMapper(), id)
-        if(arkivpost != null) {
+        if (arkivpost != null) {
             jt.query(vedleggSql, VedleggMapper(), id).forEach { arkivpost.vedleggListe.add(it) }
         }
         return arkivpost
@@ -37,6 +37,12 @@ class Database constructor(private val jt: JdbcTemplate, private val useHsql: Bo
 
     fun opprettHenvendelse(arkivpost: Arkivpost): Long {
         arkivpost.arkivpostId = nextSequenceValue()
+        insertIntoDb(arkivpost)
+        arkivpost.vedleggListe.forEach{ opprettVedlegg(arkivpost.arkivpostId, it) }
+        return arkivpost.arkivpostId
+    }
+
+    private fun insertIntoDb(arkivpost: Arkivpost) {
         jt.update(ARKIVPOST_SQL) {
             setLong(it, 1, arkivpost.arkivpostId)
             setTimestamp(it, 2, arkivpost.arkivertDato)
@@ -59,8 +65,6 @@ class Database constructor(private val jt: JdbcTemplate, private val useHsql: Bo
             setBoolean(it, 19, arkivpost.begrensetPartInnsyn)
             setBoolean(it, 20, arkivpost.sensitiv)
         }
-        arkivpost.vedleggListe.forEach{ opprettVedlegg(arkivpost.arkivpostId, it) }
-        return arkivpost.arkivpostId
     }
 
     private fun opprettVedlegg(arkivpostId: Long, vedlegg: Vedlegg) {
@@ -77,17 +81,11 @@ class Database constructor(private val jt: JdbcTemplate, private val useHsql: Bo
     }
 
     private fun nextSequenceValue(): Long {
-        val sql = if(useHsql) {
+        val sql = if (useHsql) {
             "CALL NEXT VALUE FOR arkivpostId_seq"
         } else {
             "SELECT arkivpostId_seq.nextval FROM dual"
         }
         return jt.queryForObject(sql, Long::class.java) ?: 0
     }
-
-    private fun Array<String?>.fillAndReturn(str: String): Array<String?> {
-        this.fill(str)
-        return this
-    }
-
 }

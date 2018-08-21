@@ -1,13 +1,17 @@
+import org.jetbrains.kotlin.gradle.dsl.Coroutines
+
 val junitJupiterVersion = "5.2.0"
 val spekVersion = "1.1.5"
 val hsqlDbVersion = "2.4.1"
 val kluentVersion = "1.38"
 val khttpVersion = "0.1.0"
-val javalinVersion = "2.0.0.RC3"
+val ktorVersion = "0.9.2"
+val kotlinxVersion = "0.23.3"
 val slf4jVersion = "1.8.0-beta2"
 val jacksonVersion = "2.9.6"
 val springJdbcVersion = "5.0.8.RELEASE"
 val hikariCpVersion = "2.7.8"
+val prometheusVersion = "0.4.0"
 
 val mainClass = "no.nav.henvendelsesarkiv.ApplicationKt"
 
@@ -26,13 +30,20 @@ application {
     mainClassName = mainClass
 }
 
+kotlin {
+    experimental.coroutines = Coroutines.ENABLE
+}
+
 dependencies {
     compile(kotlin("stdlib"))
-    compile("io.javalin:javalin:$javalinVersion")
+    compile("io.ktor:ktor-server-netty:$ktorVersion")
     compile("org.slf4j:slf4j-simple:$slf4jVersion")
     compile("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
     compile("org.springframework:spring-jdbc:$springJdbcVersion")
     compile("com.zaxxer:HikariCP:$hikariCpVersion")
+    compile("io.prometheus:simpleclient_hotspot:$prometheusVersion")
+    compile("io.prometheus:simpleclient_common:$prometheusVersion")
+    compile("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinxVersion")
 
     testCompile("org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion")
     testCompile("org.junit.jupiter:junit-jupiter-params:$junitJupiterVersion")
@@ -53,6 +64,7 @@ repositories {
     jcenter()
     mavenCentral()
     maven("https://repo.adeo.no/repository/maven-releases/")
+    maven("https://dl.bintray.com/kotlin/ktor")
 }
 
 java {

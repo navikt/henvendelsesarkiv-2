@@ -13,11 +13,11 @@ private const val ARKIVPOST_ID_VEDLEGG: Long = 2
 
 object DatabaseSpec : Spek({
     lateinit var jt: JdbcTemplate
-    lateinit var db: Database
-    describe("Database") {
+    lateinit var db: DatabaseService
+    describe("DatabaseService") {
         beforeGroup {
             jt = testJdbcTemplate()
-            db = Database(jt, true)
+            db = DatabaseService(jt, true)
         }
 
         beforeEachTest {
@@ -26,7 +26,7 @@ object DatabaseSpec : Spek({
             createVedlegg(jt)
         }
 
-        given("Database exists") {
+        given("DatabaseService exists") {
             on("insert arkivpost without vedlegg") {
                 it("db should contain 1 arkivpost") {
                     db.opprettHenvendelse(lagTomArkivpost())

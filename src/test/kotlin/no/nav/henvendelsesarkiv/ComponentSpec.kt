@@ -1,15 +1,16 @@
 package no.nav.henvendelsesarkiv
 
-import io.javalin.Javalin
+import io.ktor.server.engine.ApplicationEngine
 import org.amshove.kluent.*
 import org.jetbrains.spek.api.*
 import org.jetbrains.spek.api.dsl.*
+import java.util.concurrent.TimeUnit
 
 const val APP_NAME: String = "Application"
 const val APP_VERSION: String = "1.0"
 
 object ComponentSpec: Spek({
-    lateinit var app: Javalin
+    lateinit var app: ApplicationEngine
     val url = "http://localhost:7070/"
 
     describe("Integration tests") {
@@ -20,7 +21,7 @@ object ComponentSpec: Spek({
             System.setProperty("HENVENDELSESARKIVDATASOURCE_URL", "jdbcUrl")
             System.setProperty("HENVENDELSESARKIVDATASOURCE_USERNAME", "jdbcUser")
             System.setProperty("HENVENDELSESARKIVDATASOURCE_PASSWORD", "jdbcPass")
-            app = Application().init()
+            app = createHttpServer(7070, "TESTING")
         }
 
         given("application successfully started") {
@@ -47,7 +48,7 @@ object ComponentSpec: Spek({
         }
 
         afterGroup {
-            app.stop()
+            app.stop(100, 100, TimeUnit.MILLISECONDS)
         }
 
     }
