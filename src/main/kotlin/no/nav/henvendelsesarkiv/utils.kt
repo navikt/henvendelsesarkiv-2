@@ -16,7 +16,7 @@ fun hentMillisekunder(ldt: LocalDateTime): Long =
 fun boolverdi(n: Int): Boolean = n == 1
 
 fun setString(ps: PreparedStatement, index: Int, value: String?) {
-    if(value != null) {
+    if (value != null) {
         ps.setString(index, value)
     } else {
         ps.setNull(index, Types.VARCHAR)
@@ -24,7 +24,7 @@ fun setString(ps: PreparedStatement, index: Int, value: String?) {
 }
 
 fun setLong(ps: PreparedStatement, index: Int, value: Long?) {
-    if(value == null || value < 1) {
+    if (value == null || value < 1) {
         ps.setNull(index, Types.NUMERIC)
     } else {
         ps.setLong(index, value)
@@ -32,11 +32,11 @@ fun setLong(ps: PreparedStatement, index: Int, value: Long?) {
 }
 
 fun setBoolean(ps: PreparedStatement, index: Int, value: Boolean) {
-    ps.setInt(index, if(value) 1 else 0)
+    ps.setInt(index, if (value) 1 else 0)
 }
 
 fun setTimestamp(ps: PreparedStatement, index: Int, value: LocalDateTime?) {
-    if(value != null) {
+    if (value != null) {
         ps.setTimestamp(index, Timestamp(hentMillisekunder(value)))
     } else {
         ps.setNull(index, Types.TIMESTAMP)
@@ -44,7 +44,7 @@ fun setTimestamp(ps: PreparedStatement, index: Int, value: LocalDateTime?) {
 }
 
 fun setBlob(ps: PreparedStatement, index: Int, value: ByteArray?) {
-    if(value != null) {
+    if (value != null) {
         ps.setBlob(index, value.inputStream())
     } else {
         ps.setNull(index, Types.BLOB)
