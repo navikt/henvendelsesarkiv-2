@@ -39,9 +39,9 @@ object ComponentSpec: Spek({
             }
 
             on("checking fasit properties") {
-                it("fasitTest answers with app name") {
+                it("fasitTest answers with jdbc user") {
                     val response = khttp.get(url + "fasitTest")
-                    response.text `should equal` APP_NAME
+                    response.text `should equal` "jdbcUser"
                 }
             }
         }
