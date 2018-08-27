@@ -2,15 +2,14 @@ package no.nav.henvendelsesarkiv
 
 import io.ktor.application.ApplicationCall
 import io.ktor.application.call
+import io.ktor.application.install
+import io.ktor.features.ContentNegotiation
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.response.respond
 import io.ktor.response.respondText
 import io.ktor.response.respondWrite
-import io.ktor.routing.Route
-import io.ktor.routing.accept
-import io.ktor.routing.get
-import io.ktor.routing.routing
+import io.ktor.routing.*
 import io.ktor.server.engine.ApplicationEngine
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
@@ -26,6 +25,10 @@ private val fasitProperties = FasitProperties()
 data class SelftestStatus(val status: String, val applicationVersion: String)
 
 fun createHttpServer(port: Int = 7070, applicationVersion: String): ApplicationEngine = embeddedServer(Netty, port) {
+    install(ContentNegotiation) {
+
+    }
+
     routing {
         accept(ContentType.Application.Json) {
             jsonRoutes(applicationVersion)
@@ -36,18 +39,6 @@ fun createHttpServer(port: Int = 7070, applicationVersion: String): ApplicationE
         }
     }
 }.start()
-
-suspend fun ApplicationCall.respondJson(json: suspend () -> Any) {
-    respondWrite {
-        objectMapper.writeValue(this, json.invoke())
-    }
-}
-
-suspend fun ApplicationCall.respondJson(input: Any) {
-    respondWrite(ContentType.Application.Json) {
-        objectMapper.writeValue(this, input)
-    }
-}
 
 private fun Route.jsonRoutes(applicationVersion: String) {
     get("/hentarkivpost/{arkivpostId}") {
@@ -92,5 +83,11 @@ private fun Route.anyRoutes() {
         call.respondWrite(prometheusContentType) {
             TextFormat.write004(this, collectorRegistry.filteredMetricFamilySamples(names))
         }
+    }
+}
+
+private suspend fun ApplicationCall.respondJson(input: Any) {
+    respondWrite(ContentType.Application.Json) {
+        objectMapper.writeValue(this, input)
     }
 }
