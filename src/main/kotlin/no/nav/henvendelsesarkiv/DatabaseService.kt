@@ -1,10 +1,10 @@
 package no.nav.henvendelsesarkiv
 
-import no.nav.henvendelsesarkiv.model.Arkivpost
-import no.nav.henvendelsesarkiv.model.ArkivpostMapper
-import no.nav.henvendelsesarkiv.model.Vedlegg
-import no.nav.henvendelsesarkiv.model.VedleggMapper
+import no.nav.henvendelsesarkiv.model.*
 import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.jdbc.core.PreparedStatementSetter
+import java.sql.Timestamp
+import java.time.LocalDateTime
 
 private const val ARKIVPOST_SQL = """
             INSERT INTO arkivpost(arkivpostId, arkivertDato, mottattDato, utgaarDato, temagruppe, arkivpostType, dokumentType,
@@ -23,6 +23,8 @@ private const val VEDLEGG_SQL = """
             )
             """
 
+private const val TIMEOUT_FOR_JOBB_TIMER: Long = 4
+
 class DatabaseService constructor(private val jt: JdbcTemplate, private val useHsql: Boolean = false) {
 
     fun hentHenvendelse(id: Long): Arkivpost? {
@@ -40,6 +42,49 @@ class DatabaseService constructor(private val jt: JdbcTemplate, private val useH
         insertIntoDb(arkivpost)
         arkivpost.vedleggListe.forEach{ opprettVedlegg(arkivpost.arkivpostId, it) }
         return arkivpost.arkivpostId
+    }
+
+    fun hentTemagrupper(aktoerId: String): List<ArkivpostTemagruppe> {
+        val temagruppeSql = "SELECT arkivpostId, aktoerId, fodselsnummer, temagruppe, status FROM arkivpost WHERE aktoerId = ?"
+        return jt.query(temagruppeSql, PreparedStatementSetter { it.setString(1, aktoerId) }, ArkivpostTemagruppeMapper())
+    }
+
+    fun hentHenvendelserForAktoer(aktoerId: String, fra: LocalDateTime?, til: LocalDateTime?, max: Int?): List<Arkivpost> {
+        val fraTekst = if (fra != null) { " AND mottattDato >= ? " } else { " " }
+        val tilTekst = if (til != null) { " AND mottattDato <= ? " } else { " " }
+        val sql = wrapInMax("""
+            SELECT * FROM arkivpost WHERE aktoerId = ?
+            $fraTekst $tilTekst
+            ORDER BY mottattDato DESC
+        """.trimIndent(), max)
+
+        return jt.query(sql, setParams(aktoerId, fra, til), ArkivpostMapper())
+    }
+
+    fun settUtgaarDato(arkivpostId: Long, dato: LocalDateTime) {
+        val sql = "UPDATE arkivpost SET utgaarDato = ? WHERE arkivpostId = ?"
+        jt.update(sql, Timestamp(hentMillisekunder(dato)), arkivpostId)
+    }
+
+    fun kasserUtgaatteHenvendelser() {
+        val terminereJobb = LocalDateTime.now().plusHours(TIMEOUT_FOR_JOBB_TIMER)
+        val sql = "SELECT arkivpostId FROM arkivpost WHERE utgaarDato <= ?"
+        val list = jt.queryForList(sql, Long::class.java, Timestamp(System.currentTimeMillis()))
+
+        for (arkivpostId in list) {
+            jt.update("UPDATE vedlegg SET dokument = NULL WHERE arkivpostId = ?", arkivpostId)
+            jt.update("UPDATE arkivpost SET status = ? WHERE arkivpostId = ?", ArkivStatusType.KASSERT.name, arkivpostId)
+            if (LocalDateTime.now().isAfter(terminereJobb)) {
+                break;
+            }
+        }
+    }
+
+    private fun wrapInMax(sql: String, max: Int?): String {
+        if(max != null) {
+            return "SELECT * FROM ($sql) WHERE ROWNUM <= $max"
+        }
+        return sql
     }
 
     private fun insertIntoDb(arkivpost: Arkivpost) {
@@ -87,5 +132,14 @@ class DatabaseService constructor(private val jt: JdbcTemplate, private val useH
             "SELECT arkivpostId_seq.nextval FROM dual"
         }
         return jt.queryForObject(sql, Long::class.java) ?: 0
+    }
+
+    private fun setParams(aktoerId: String, fra: LocalDateTime?, til: LocalDateTime?): PreparedStatementSetter {
+        var i = 1
+        return PreparedStatementSetter { ps ->
+            ps.setString(i++, aktoerId)
+            fra?.let { ps.setTimestamp(i++, Timestamp(hentMillisekunder(it))) }
+            til?.let { ps.setTimestamp(i++, Timestamp(hentMillisekunder(it))) }
+        }
     }
 }

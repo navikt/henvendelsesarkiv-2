@@ -25,14 +25,12 @@ object ComponentSpec: Spek({
         }
 
         given("application successfully started") {
-            on("NAIS healthcheck 1") {
+            on("NAIS healthcheck") {
                 it("isAlive answers with 200") {
                     val response = khttp.get(url + "isAlive")
                     response.statusCode `should equal` 200
                 }
-            }
 
-            on("NAIS healthcheck 2") {
                 it("isReady answers with 200") {
                     val response = khttp.get(url + "isReady")
                     response.statusCode `should equal` 200
