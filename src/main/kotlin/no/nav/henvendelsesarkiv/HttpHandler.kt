@@ -19,7 +19,6 @@ import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.prometheus.client.CollectorRegistry
 import io.prometheus.client.exporter.common.TextFormat
-import no.nav.henvendelsesarkiv.model.Arkivpost
 import org.slf4j.LoggerFactory
 import java.time.LocalDateTime
 
