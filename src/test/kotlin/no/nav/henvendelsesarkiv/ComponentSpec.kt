@@ -21,6 +21,7 @@ object ComponentSpec: Spek({
             System.setProperty("HENVENDELSESARKIVDATASOURCE_URL", "jdbcUrl")
             System.setProperty("HENVENDELSESARKIVDATASOURCE_USERNAME", "jdbcUser")
             System.setProperty("HENVENDELSESARKIVDATASOURCE_PASSWORD", "jdbcPass")
+            System.setProperty("ABAC.PDP.ENDPOINT", "abac")
             app = createHttpServer(7070, "TESTING")
         }
 

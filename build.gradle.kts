@@ -44,12 +44,12 @@ dependencies {
     compile("io.prometheus:simpleclient_hotspot:$prometheusVersion")
     compile("io.prometheus:simpleclient_common:$prometheusVersion")
     compile("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinxVersion")
+    compile("khttp:khttp:$khttpVersion")
 
     testCompile("org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion")
     testCompile("org.junit.jupiter:junit-jupiter-params:$junitJupiterVersion")
     testRuntime("org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion")
     testCompile("org.amshove.kluent:kluent:$kluentVersion")
-    testCompile("khttp:khttp:$khttpVersion")
     testCompile("org.hsqldb:hsqldb:$hsqlDbVersion")
     testCompile("org.jetbrains.spek:spek-api:$spekVersion") {
         exclude(group = "org.jetbrains.kotlin")
