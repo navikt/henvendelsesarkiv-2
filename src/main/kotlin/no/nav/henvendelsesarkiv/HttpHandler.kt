@@ -4,8 +4,12 @@ import io.ktor.application.ApplicationCall
 import io.ktor.application.call
 import io.ktor.application.install
 import io.ktor.features.ContentNegotiation
+import io.ktor.gson.gson
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
+import io.ktor.http.Parameters
+import io.ktor.pipeline.PipelineContext
+import io.ktor.request.receive
 import io.ktor.response.respond
 import io.ktor.response.respondText
 import io.ktor.response.respondWrite
@@ -16,6 +20,7 @@ import io.ktor.server.netty.Netty
 import io.prometheus.client.CollectorRegistry
 import io.prometheus.client.exporter.common.TextFormat
 import org.slf4j.LoggerFactory
+import java.time.LocalDateTime
 
 val collectorRegistry: CollectorRegistry = CollectorRegistry.defaultRegistry
 private val log = LoggerFactory.getLogger("faktum.HttpServer")
@@ -26,7 +31,11 @@ data class SelftestStatus(val status: String, val applicationVersion: String)
 
 fun createHttpServer(port: Int = 7070, applicationVersion: String): ApplicationEngine = embeddedServer(Netty, port) {
     install(ContentNegotiation) {
-
+        gson {
+            registerTypeAdapter(LocalDateTime::class.java, localDateTimeSerializer)
+            registerTypeAdapter(LocalDateTime::class.java, localDateTimeDeserializer)
+            setPrettyPrinting()
+        }
     }
 
     routing {
@@ -41,26 +50,79 @@ fun createHttpServer(port: Int = 7070, applicationVersion: String): ApplicationE
 }.start()
 
 private fun Route.jsonRoutes(applicationVersion: String) {
-    get("/hentarkivpost/{arkivpostId}") {
-        val arkivpostId = call.parameters["arkivpostId"]?.toLong()
-        if (arkivpostId == null) {
-            call.respond(HttpStatusCode.BadRequest)
-        } else {
-            val arkivpost = DatabaseService(hikariJdbcTemplate).hentHenvendelse(arkivpostId)
-            if (arkivpost == null) {
-                call.respond(HttpStatusCode.NotFound)
-            } else {
-                call.respondJson(arkivpost)
-            }
-        }
+    get("/arkivpost/{arkivpostId}") {
+        hentArkivpost()
+    }
+
+    post("/arkivpost") {
+        call.respond(DatabaseService(hikariJdbcTemplate).opprettHenvendelse(call.receive()))
+    }
+
+    get("/temagrupper/{aktørId}") {
+        hentTemagrupper()
+    }
+
+    post("/arkivpost/{arkivpostId}/utgaar") {
+        settUtgaarDato()
+    }
+
+    get("/arkivpost/aktoer/{aktørId}") {
+        hentArkivpostForAktoer()
     }
 
     get("/isAlive") {
-        call.respondJson(SelftestStatus(status = "I'm alive", applicationVersion = applicationVersion))
+        call.respond(SelftestStatus(status = "I'm alive", applicationVersion = applicationVersion))
     }
 
     get("/isReady") {
-        call.respondJson(SelftestStatus(status = "I'm ready", applicationVersion = applicationVersion))
+        call.respond(SelftestStatus(status = "I'm ready", applicationVersion = applicationVersion))
+    }
+}
+
+private suspend fun PipelineContext<Unit, ApplicationCall>.hentArkivpost() {
+    val arkivpostId = call.parameters["arkivpostId"]?.toLong()
+    if (arkivpostId == null) {
+        call.respond(HttpStatusCode.BadRequest)
+    } else {
+        val arkivpost = DatabaseService(hikariJdbcTemplate).hentHenvendelse(arkivpostId)
+        if (arkivpost == null) {
+            call.respond(HttpStatusCode.NotFound)
+        } else {
+            call.respond(arkivpost)
+        }
+    }
+}
+
+private suspend fun PipelineContext<Unit, ApplicationCall>.hentTemagrupper() {
+    val aktoerId = call.parameters["aktørId"]
+    if (aktoerId == null) {
+        call.respond(HttpStatusCode.BadRequest)
+    } else {
+        call.respond(DatabaseService(hikariJdbcTemplate).hentTemagrupper(aktoerId))
+    }
+}
+
+private suspend fun PipelineContext<Unit, ApplicationCall>.settUtgaarDato() {
+    val arkivpostId = call.parameters["arkivpostId"]?.toLong()
+    val post = call.receive<Parameters>()
+    val utgaarDato = post["utgaarDato"]?.let(::lagDateTime)
+    if (arkivpostId == null || utgaarDato == null) {
+        call.respond(HttpStatusCode.BadRequest)
+    } else {
+        DatabaseService(hikariJdbcTemplate).settUtgaarDato(arkivpostId, utgaarDato)
+    }
+}
+
+private suspend fun PipelineContext<Unit, ApplicationCall>.hentArkivpostForAktoer() {
+    val aktoerId = call.parameters["aktørId"]
+    val fra = call.request.queryParameters["fra"]?.let(::lagDateTime)
+    val til = call.request.queryParameters["til"]?.let(::lagDateTime)
+    val max = call.request.queryParameters["max"]?.toInt()
+
+    if (aktoerId == null) {
+        call.respond(HttpStatusCode.BadRequest)
+    } else {
+        call.respond(DatabaseService(hikariJdbcTemplate).hentHenvendelserForAktoer(aktoerId, fra, til, max))
     }
 }
 
@@ -83,11 +145,5 @@ private fun Route.anyRoutes() {
         call.respondWrite(prometheusContentType) {
             TextFormat.write004(this, collectorRegistry.filteredMetricFamilySamples(names))
         }
-    }
-}
-
-private suspend fun ApplicationCall.respondJson(input: Any) {
-    respondWrite(ContentType.Application.Json) {
-        objectMapper.writeValue(this, input)
     }
 }
