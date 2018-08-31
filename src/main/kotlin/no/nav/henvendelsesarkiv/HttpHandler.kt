@@ -19,12 +19,15 @@ import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.prometheus.client.CollectorRegistry
 import io.prometheus.client.exporter.common.TextFormat
+import no.nav.henvendelsesarkiv.abac.Decision
+import no.nav.henvendelsesarkiv.abac.PdpClient
 import org.slf4j.LoggerFactory
 import java.time.LocalDateTime
 
 val collectorRegistry: CollectorRegistry = CollectorRegistry.defaultRegistry
 private val log = LoggerFactory.getLogger("faktum.HttpServer")
 private val prometheusContentType = ContentType.parse(TextFormat.CONTENT_TYPE_004)
+private val pdpClient = PdpClient(Decision.Deny)
 
 data class SelftestStatus(val status: String, val applicationVersion: String)
 
@@ -79,6 +82,7 @@ private fun Route.jsonRoutes(applicationVersion: String) {
 }
 
 private suspend fun PipelineContext<Unit, ApplicationCall>.hentArkivpost() {
+    if (!pdpClient.hasAccessToResource()) call.respond(HttpStatusCode.Forbidden)
     val arkivpostId = call.parameters["arkivpostId"]?.toLong()
     if (arkivpostId == null) {
         call.respond(HttpStatusCode.BadRequest)

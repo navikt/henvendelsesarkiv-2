@@ -13,7 +13,7 @@ private val ABAC_PDP_HEADERS = mapOf(
         "Autorization" to Base64.getEncoder().encodeToString("Basic ${fasitProperties.abacUser}:${fasitProperties.abacPass}".toByteArray())
 )
 class PdpClient(val bias: Decision) {
-    
+
     fun hasAccessToResource(): Boolean {
         val response = evaluate(createRequestWithDefaultHeaders())
         // TODO Handle (log) advice and obligations
