@@ -2,6 +2,8 @@ package no.nav.henvendelsesarkiv
 
 import kotlinx.coroutines.experimental.runBlocking
 
+val fasitProperties = FasitProperties()
+
 class Application
 
 fun main(args: Array<String>) {

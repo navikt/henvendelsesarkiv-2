@@ -37,6 +37,7 @@ kotlin {
 dependencies {
     compile(kotlin("stdlib"))
     compile("io.ktor:ktor-server-netty:$ktorVersion")
+    compile("io.ktor:ktor-gson:$ktorVersion")
     compile("org.slf4j:slf4j-simple:$slf4jVersion")
     compile("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
     compile("org.springframework:spring-jdbc:$springJdbcVersion")
