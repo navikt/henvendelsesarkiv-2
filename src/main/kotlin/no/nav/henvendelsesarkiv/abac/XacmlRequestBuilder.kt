@@ -22,7 +22,7 @@ data class CAttribute(
         @SerializedName("Value") val value: Any
         )
 
-class XacmlRequestBuilder() {
+class XacmlRequestBuilder {
     private val requestAttributes = HashMap<Category, CategoryAttribute>()
 
     fun addResourceAttribute(id: String, value: Any): XacmlRequestBuilder {

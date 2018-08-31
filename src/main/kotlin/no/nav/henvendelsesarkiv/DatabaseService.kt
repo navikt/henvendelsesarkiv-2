@@ -75,7 +75,7 @@ class DatabaseService constructor(private val jt: JdbcTemplate, private val useH
             jt.update("UPDATE vedlegg SET dokument = NULL WHERE arkivpostId = ?", arkivpostId)
             jt.update("UPDATE arkivpost SET status = ? WHERE arkivpostId = ?", ArkivStatusType.KASSERT.name, arkivpostId)
             if (LocalDateTime.now().isAfter(terminereJobb)) {
-                break;
+                break
             }
         }
     }
