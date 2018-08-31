@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory
 import java.time.LocalDateTime
 
 val collectorRegistry: CollectorRegistry = CollectorRegistry.defaultRegistry
-private val log = LoggerFactory.getLogger("faktum.HttpServer")
+private val log = LoggerFactory.getLogger("henvendelsesarkiv.HttpServer")
 private val prometheusContentType = ContentType.parse(TextFormat.CONTENT_TYPE_004)
 private val pdpClient = PdpClient(Decision.Deny)
 

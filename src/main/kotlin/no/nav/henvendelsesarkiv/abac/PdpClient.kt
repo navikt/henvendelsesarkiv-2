@@ -2,6 +2,7 @@ package no.nav.henvendelsesarkiv.abac
 
 import com.google.gson.GsonBuilder
 import no.nav.henvendelsesarkiv.fasitProperties
+import org.slf4j.LoggerFactory
 import java.util.*
 
 
@@ -12,11 +13,13 @@ private val ABAC_PDP_HEADERS = mapOf(
         "Content-Type" to "application/xacml+json",
         "Autorization" to Base64.getEncoder().encodeToString("Basic ${fasitProperties.abacUser}:${fasitProperties.abacPass}".toByteArray())
 )
+
 class PdpClient(val bias: Decision) {
+    private val log = LoggerFactory.getLogger("henvendelsesarkiv.PdpClient")
 
     fun hasAccessToResource(): Boolean {
         val response = evaluate(createRequestWithDefaultHeaders())
-        // TODO Handle (log) advice and obligations
+        logAnswer(response)
         return createBiasedDecision(response.getDecision()) == Decision.Permit
     }
 
@@ -39,5 +42,11 @@ class PdpClient(val bias: Decision) {
             Decision.NotApplicable, Decision.Indeterminate -> bias
             else -> decision
         }
+    }
+
+    private fun logAnswer(response: XacmlResponseWrapper) {
+        log.debug(response.getStatusLogLine())
+        if (response.getNumberOfObligations() > 0) log.info(response.getOblogationsLogLine())
+        if (response.getNumberOfAdvice() > 0) log.info(response.getAdviceLogLine())
     }
 }
