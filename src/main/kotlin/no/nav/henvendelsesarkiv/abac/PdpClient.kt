@@ -5,7 +5,6 @@ import no.nav.henvendelsesarkiv.fasitProperties
 import org.slf4j.LoggerFactory
 import java.util.*
 
-
 private val url = fasitProperties.abacEndpoint
 private val gson = GsonBuilder().setPrettyPrinting().create()
 
@@ -14,7 +13,7 @@ private val ABAC_PDP_HEADERS = mapOf(
         "Autorization" to Base64.getEncoder().encodeToString("Basic ${fasitProperties.abacUser}:${fasitProperties.abacPass}".toByteArray())
 )
 
-class PdpClient(val bias: Decision) {
+class PdpClient(private val bias: Decision) {
     private val log = LoggerFactory.getLogger("henvendelsesarkiv.PdpClient")
 
     fun hasAccessToResource(): Boolean {

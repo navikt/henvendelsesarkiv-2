@@ -50,8 +50,8 @@ class DatabaseService constructor(private val jt: JdbcTemplate, private val useH
     }
 
     fun hentHenvendelserForAktoer(aktoerId: String, fra: LocalDateTime?, til: LocalDateTime?, max: Int?): List<Arkivpost> {
-        val fraTekst = if (fra != null) { " AND mottattDato >= ? " } else { " " }
-        val tilTekst = if (til != null) { " AND mottattDato <= ? " } else { " " }
+        val fraTekst = fra?.let { " AND mottattDato >= ? " } ?: ""
+        val tilTekst = til?.let { " AND mottattDato <= ? " } ?: ""
         val sql = wrapInMax("""
             SELECT * FROM arkivpost WHERE aktoerId = ?
             $fraTekst $tilTekst
@@ -81,10 +81,7 @@ class DatabaseService constructor(private val jt: JdbcTemplate, private val useH
     }
 
     private fun wrapInMax(sql: String, max: Int?): String {
-        if(max != null) {
-            return "SELECT * FROM ($sql) WHERE ROWNUM <= $max"
-        }
-        return sql
+        return max?.let { "SELECT * FROM ($sql) WHERE ROWNUM <= $it" } ?: sql
     }
 
     private fun insertIntoDb(arkivpost: Arkivpost) {
