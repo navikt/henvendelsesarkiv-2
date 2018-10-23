@@ -21,8 +21,8 @@ object DatabaseSpec : Spek({
         beforeEachTest {
             jt.execute("SET DATABASE SQL SYNTAX ORA TRUE")
             createSequence(jt)
-            createArkivpost(jt)
-            createVedlegg(jt)
+            createArkivpostTable(jt)
+            createVedleggTable(jt)
         }
 
         given("DatabaseService exists") {

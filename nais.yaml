@@ -1,4 +1,4 @@
-name: henvendelsesarkiv
+name: henvendelsesarkiv2
 image: navikt/henvendelsesarkiv
 team: oppfolging
 replicas:

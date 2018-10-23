@@ -18,7 +18,7 @@ fun createSequence(jt: JdbcTemplate) {
     jt.execute("CREATE SEQUENCE arkivpostId_seq AS INTEGER START WITH 1 INCREMENT BY 1")
 }
 
-fun createArkivpost(jt: JdbcTemplate) {
+fun createArkivpostTable(jt: JdbcTemplate) {
     jt.execute("DROP TABLE arkivpost IF EXISTS")
     jt.execute("""
         CREATE TABLE arkivpost (
@@ -46,7 +46,7 @@ fun createArkivpost(jt: JdbcTemplate) {
     """.trimIndent())
 }
 
-fun createVedlegg(jt: JdbcTemplate) {
+fun createVedleggTable(jt: JdbcTemplate) {
     jt.execute("DROP TABLE vedlegg IF EXISTS")
     jt.execute("""
         CREATE TABLE vedlegg (
