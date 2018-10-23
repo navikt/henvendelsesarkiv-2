@@ -29,3 +29,7 @@ fasitResources:
         resourceType: DataSource
       - alias: appdynamics
         resourceType: applicationproperties
+      - alias: abac
+        resourceType: credential
+      - alias: abac_pdp
+        resourceType: RestService
