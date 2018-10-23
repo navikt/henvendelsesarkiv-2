@@ -6,9 +6,9 @@ data class FasitProperties(
         val dbUrl: String = getEnvVar("HENVENDELSESARKIVDATASOURCE_URL"),
         val dbUsername: String = getEnvVar("HENVENDELSESARKIVDATASOURCE_USERNAME"),
         val dbPassword: String = getEnvVar("HENVENDELSESARKIVDATASOURCE_PASSWORD"),
-        val abacEndpoint: String = getEnvVar("ABAC.PDP.ENDPOINT_URL"),
-        val abacUser: String = getEnvVar("ABAC_USER"),
-        val abacPass: String = getEnvVar("ABAC_PASS")
+        val abacEndpoint: String = getEnvVar("ABAC_PDP.URL"),
+        val abacUser: String = getEnvVar("ABAC.USERNAME"),
+        val abacPass: String = getEnvVar("ABAC.PASSWORD")
 )
 
 fun getEnvVar(name: String, default: String? = null): String =
