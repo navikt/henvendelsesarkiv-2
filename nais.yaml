@@ -31,5 +31,5 @@ fasitResources:
         resourceType: applicationproperties
       - alias: abac
         resourceType: credential
-      - alias: abac_pdp
+      - alias: abacpdp
         resourceType: RestService
