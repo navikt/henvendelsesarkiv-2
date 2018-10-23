@@ -21,6 +21,9 @@ plugins {
 }
 
 buildscript {
+    repositories {
+        maven("https://repo.adeo.no/repository/maven-central")
+    }
     dependencies {
         classpath("org.junit.platform:junit-platform-gradle-plugin:1.2.0")
     }
@@ -62,10 +65,9 @@ dependencies {
 }
 
 repositories {
-    jcenter()
-    mavenCentral()
-    maven("https://repo.adeo.no/repository/maven-releases/")
-    maven("https://dl.bintray.com/kotlin/ktor")
+    maven("https://repo.adeo.no/repository/maven-central")
+    maven("https://plugins.gradle.org/m2/")
+    maven("https://dl.bintray.com/kotlin/ktor/")
 }
 
 java {
