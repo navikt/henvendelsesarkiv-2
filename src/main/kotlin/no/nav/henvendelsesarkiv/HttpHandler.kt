@@ -20,14 +20,15 @@ import io.ktor.server.netty.Netty
 import io.prometheus.client.CollectorRegistry
 import io.prometheus.client.exporter.common.TextFormat
 import no.nav.henvendelsesarkiv.abac.Decision
-import no.nav.henvendelsesarkiv.abac.PdpClient
+import no.nav.henvendelsesarkiv.abac.PepClient
 import org.slf4j.LoggerFactory
 import java.time.LocalDateTime
 
-val collectorRegistry: CollectorRegistry = CollectorRegistry.defaultRegistry
 private val log = LoggerFactory.getLogger("henvendelsesarkiv.HttpServer")
 private val prometheusContentType = ContentType.parse(TextFormat.CONTENT_TYPE_004)
-private val pdpClient = PdpClient(Decision.Deny)
+private val pdpClient = PepClient(Decision.Deny)
+
+val collectorRegistry: CollectorRegistry = CollectorRegistry.defaultRegistry
 
 data class SelftestStatus(val status: String, val applicationVersion: String)
 
@@ -82,7 +83,7 @@ private fun Route.jsonRoutes(applicationVersion: String) {
 }
 
 private suspend fun PipelineContext<Unit, ApplicationCall>.hentArkivpost() {
-    if (!pdpClient.hasAccessToResource()) call.respond(HttpStatusCode.Forbidden)
+    if (!checkAccess("", "")) call.respond(HttpStatusCode.Forbidden)
     val arkivpostId = call.parameters["arkivpostId"]?.toLong()
     if (arkivpostId == null) {
         call.respond(HttpStatusCode.BadRequest)
@@ -149,4 +150,12 @@ private fun Route.anyRoutes() {
             TextFormat.write004(this, collectorRegistry.filteredMetricFamilySamples(names))
         }
     }
+}
+
+private fun checkAccess(token: String, action: String): Boolean {
+    return pdpClient.hasAccessToResource(extractBodyFromOidcToken(token),  action)
+}
+
+private fun extractBodyFromOidcToken(token: String): String {
+    return token.substringAfter(".").substringBefore(".")
 }

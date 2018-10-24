@@ -13,11 +13,14 @@ private val ABAC_PDP_HEADERS = mapOf(
         "Autorization" to Base64.getEncoder().encodeToString("Basic ${fasitProperties.abacUser}:${fasitProperties.abacPass}".toByteArray())
 )
 
-class PdpClient(private val bias: Decision) {
-    private val log = LoggerFactory.getLogger("henvendelsesarkiv.PdpClient")
+private const val PEP_ID = "henvendelsesarkiv"
+private const val DOMENE = "brukerdialog"
 
-    fun hasAccessToResource(): Boolean {
-        val response = evaluate(createRequestWithDefaultHeaders())
+class PepClient(private val bias: Decision) {
+    private val log = LoggerFactory.getLogger("henvendelsesarkiv.PepClient")
+
+    fun hasAccessToResource(oidcTokenBody: String, action: String): Boolean {
+        val response = evaluate(createRequestWithDefaultHeaders(oidcTokenBody, action))
         logAnswer(response)
         return createBiasedDecision(response.getDecision()) == Decision.Permit
     }
@@ -31,9 +34,12 @@ class PdpClient(private val bias: Decision) {
         return XacmlResponseWrapper(result.text)
     }
 
-    private fun createRequestWithDefaultHeaders(): XacmlRequestBuilder {
-        // TODO Add headers (token, pepid...)
+    private fun createRequestWithDefaultHeaders(oidcTokenBody: String, action: String): XacmlRequestBuilder {
         return XacmlRequestBuilder()
+                .addEnvironmentAttribute(ENVIRONMENT_OIDC_TOKEN_BODY, oidcTokenBody)
+                .addEnvironmentAttribute(ENVIRONMENT_PEP_ID, PEP_ID)
+                .addResourceAttribute(RESOURCE_DOMENE, DOMENE)
+                .addActionAttribute(ACTION_ID, action)
     }
 
     private fun createBiasedDecision(decision: Decision): Decision {
