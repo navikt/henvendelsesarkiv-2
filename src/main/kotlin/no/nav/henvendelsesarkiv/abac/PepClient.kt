@@ -5,6 +5,7 @@ import no.nav.henvendelsesarkiv.fasitProperties
 import org.slf4j.LoggerFactory
 import java.util.*
 
+private val log = LoggerFactory.getLogger("henvendelsesarkiv.PepClient")
 private val url = fasitProperties.abacEndpoint
 private val gson = GsonBuilder().setPrettyPrinting().create()
 
@@ -17,7 +18,6 @@ private const val PEP_ID = "henvendelsesarkiv"
 private const val DOMENE = "brukerdialog"
 
 class PepClient(private val bias: Decision) {
-    private val log = LoggerFactory.getLogger("henvendelsesarkiv.PepClient")
 
     fun hasAccessToResource(oidcTokenBody: String, action: String): Boolean {
         val response = evaluate(createRequestWithDefaultHeaders(oidcTokenBody, action))
@@ -27,6 +27,7 @@ class PepClient(private val bias: Decision) {
 
     private fun evaluate(xacmlRequestBuilder: XacmlRequestBuilder): XacmlResponseWrapper {
         val xacmlJson = gson.toJson(xacmlRequestBuilder.build())
+        log.info(xacmlJson)
         val result = khttp.post(url, headers = ABAC_PDP_HEADERS, data = xacmlJson)
         if (result.statusCode != 200) {
             throw RuntimeException("ABAC call failed with ${result.statusCode}: ${result.text}")
