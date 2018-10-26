@@ -3,6 +3,8 @@ package no.nav.henvendelsesarkiv
 import io.ktor.application.ApplicationCall
 import io.ktor.application.call
 import io.ktor.application.install
+import io.ktor.auth.Authentication
+import io.ktor.auth.jwt.jwt
 import io.ktor.features.ContentNegotiation
 import io.ktor.gson.gson
 import io.ktor.http.ContentType
@@ -12,6 +14,7 @@ import io.ktor.pipeline.PipelineContext
 import io.ktor.request.receive
 import io.ktor.response.respond
 import io.ktor.response.respondText
+import io.ktor.response.respondTextWriter
 import io.ktor.response.respondWrite
 import io.ktor.routing.*
 import io.ktor.server.engine.ApplicationEngine
@@ -21,6 +24,7 @@ import io.prometheus.client.CollectorRegistry
 import io.prometheus.client.exporter.common.TextFormat
 import no.nav.henvendelsesarkiv.abac.Decision
 import no.nav.henvendelsesarkiv.abac.PepClient
+import no.nav.henvendelsesarkiv.jwt.JwtConfig
 import org.slf4j.LoggerFactory
 import java.time.LocalDateTime
 
@@ -33,6 +37,17 @@ val collectorRegistry: CollectorRegistry = CollectorRegistry.defaultRegistry
 data class SelftestStatus(val status: String, val applicationVersion: String)
 
 fun createHttpServer(port: Int = 7070, applicationVersion: String): ApplicationEngine = embeddedServer(Netty, port) {
+    install(Authentication) {
+        jwt {
+            val jwtConfig = JwtConfig()
+            realm = fasitProperties.jwtRealm
+            verifier(jwtConfig.jwkProvider, fasitProperties.jwtIssuer)
+            validate { credentials ->
+                jwtConfig.validate(credentials)
+            }
+        }
+    }
+
     install(ContentNegotiation) {
         gson {
             registerTypeAdapter(LocalDateTime::class.java, localDateTimeSerializer)
@@ -146,7 +161,7 @@ private fun Route.anyRoutes() {
     get("/prometheus") {
         log.info("Responding to prometheus request.")
         val names = call.request.queryParameters.getAll("name[]")?.toSet() ?: setOf()
-        call.respondWrite(prometheusContentType) {
+        call.respondTextWriter(prometheusContentType) {
             TextFormat.write004(this, collectorRegistry.filteredMetricFamilySamples(names))
         }
     }

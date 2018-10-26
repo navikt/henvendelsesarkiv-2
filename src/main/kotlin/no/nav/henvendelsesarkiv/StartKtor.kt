@@ -8,9 +8,13 @@ fun main(args: Array<String>) {
     System.setProperty("HENVENDELSESARKIVDATASOURCE_URL", "jdbcUrl")
     System.setProperty("HENVENDELSESARKIVDATASOURCE_USERNAME", "jdbcUser")
     System.setProperty("HENVENDELSESARKIVDATASOURCE_PASSWORD", "jdbcPass")
-    System.setProperty("ABACPDP_URL", "abac")
-    System.setProperty("ABAC_USERNAME", "abacuser")
-    System.setProperty("ABAC_PASSWORD", "abacpass")
+    System.setProperty("ABAC_PDP_ENDPOINT_URL", "abac")
+    System.setProperty("SRVHENVENDELSESARKIV2_USERNAME", "abacuser")
+    System.setProperty("SRVHENVENDELSESARKIV2_PASSWORD", "abacpass")
+    System.setProperty("SECURITY-TOKEN-SERVICE-JWKS_URL", "")
+    System.setProperty("SECURITY-TOKEN-SERVICE-ISSUER_URL", "")
+    System.setProperty("JWT_AUDIENCE", "AUD")
+    System.setProperty("JWT_REALM", "REALM")
 
     createHttpServer(7070, "TESTING")
 }

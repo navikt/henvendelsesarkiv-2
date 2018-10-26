@@ -24,6 +24,11 @@ object ComponentSpec: Spek({
             System.setProperty("ABAC_PDP_ENDPOINT_URL", "abac")
             System.setProperty("SRVHENVENDELSESARKIV2_USERNAME", "abacuser")
             System.setProperty("SRVHENVENDELSESARKIV2_PASSWORD", "abacpass")
+            System.setProperty("AZUERAD-JWKS", "http...")
+            System.setProperty("AZUREAD-ISSUER", "http...")
+            System.setProperty("JWT_AUDIENCE", "Audience")
+            System.setProperty("JWT_REALM", "Realm")
+
             app = createHttpServer(7070, "TESTING")
         }
 
