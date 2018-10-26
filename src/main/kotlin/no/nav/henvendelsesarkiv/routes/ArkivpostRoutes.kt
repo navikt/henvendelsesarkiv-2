@@ -2,6 +2,7 @@ package no.nav.henvendelsesarkiv.routes
 
 import io.ktor.application.ApplicationCall
 import io.ktor.application.call
+import io.ktor.http.HttpStatusCode
 import io.ktor.http.Parameters
 import io.ktor.pipeline.PipelineContext
 import io.ktor.request.header
@@ -17,7 +18,7 @@ fun Route.arkivpostRoutes(pepClient: PepClient) {
 
     get("/arkivpost/{arkivpostId}") {
         if (!pepClient.checkAccess(call.request.header("Authorization"), "read"))
-            call.respond(io.ktor.http.HttpStatusCode.Forbidden)
+            call.respond(HttpStatusCode.Forbidden)
         hentArkivpost()
     }
 
@@ -41,11 +42,11 @@ fun Route.arkivpostRoutes(pepClient: PepClient) {
 private suspend fun PipelineContext<Unit, ApplicationCall>.hentArkivpost() {
     val arkivpostId = call.parameters["arkivpostId"]?.toLong()
     if (arkivpostId == null) {
-        call.respond(io.ktor.http.HttpStatusCode.BadRequest)
+        call.respond(HttpStatusCode.BadRequest)
     } else {
-        val arkivpost = no.nav.henvendelsesarkiv.DatabaseService(no.nav.henvendelsesarkiv.hikariJdbcTemplate).hentHenvendelse(arkivpostId)
+        val arkivpost = DatabaseService(hikariJdbcTemplate).hentHenvendelse(arkivpostId)
         if (arkivpost == null) {
-            call.respond(io.ktor.http.HttpStatusCode.NotFound)
+            call.respond(HttpStatusCode.NotFound)
         } else {
             call.respond(arkivpost)
         }
@@ -55,9 +56,9 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.hentArkivpost() {
 private suspend fun PipelineContext<Unit, ApplicationCall>.hentTemagrupper() {
     val aktoerId = call.parameters["aktørId"]
     if (aktoerId == null) {
-        call.respond(io.ktor.http.HttpStatusCode.BadRequest)
+        call.respond(HttpStatusCode.BadRequest)
     } else {
-        call.respond(no.nav.henvendelsesarkiv.DatabaseService(no.nav.henvendelsesarkiv.hikariJdbcTemplate).hentTemagrupper(aktoerId))
+        call.respond(DatabaseService(hikariJdbcTemplate).hentTemagrupper(aktoerId))
     }
 }
 
@@ -66,9 +67,9 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.settUtgaarDato() {
     val post = call.receive<Parameters>()
     val utgaarDato = post["utgaarDato"]?.let(::lagDateTime)
     if (arkivpostId == null || utgaarDato == null) {
-        call.respond(io.ktor.http.HttpStatusCode.BadRequest)
+        call.respond(HttpStatusCode.BadRequest)
     } else {
-        no.nav.henvendelsesarkiv.DatabaseService(no.nav.henvendelsesarkiv.hikariJdbcTemplate).settUtgaarDato(arkivpostId, utgaarDato)
+        DatabaseService(hikariJdbcTemplate).settUtgaarDato(arkivpostId, utgaarDato)
     }
 }
 
@@ -79,9 +80,9 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.hentArkivpostForAktoe
     val max = call.request.queryParameters["max"]?.toInt()
 
     if (aktoerId == null) {
-        call.respond(io.ktor.http.HttpStatusCode.BadRequest)
+        call.respond(HttpStatusCode.BadRequest)
     } else {
-        call.respond(no.nav.henvendelsesarkiv.DatabaseService(no.nav.henvendelsesarkiv.hikariJdbcTemplate).hentHenvendelserForAktoer(aktoerId, fra, til, max))
+        call.respond(DatabaseService(hikariJdbcTemplate).hentHenvendelserForAktoer(aktoerId, fra, til, max))
     }
 }
 
