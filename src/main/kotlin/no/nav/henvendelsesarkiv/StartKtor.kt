@@ -1,5 +1,3 @@
-@file:JvmName("StartKtor")
-
 package no.nav.henvendelsesarkiv
 
 fun main(args: Array<String>) {
