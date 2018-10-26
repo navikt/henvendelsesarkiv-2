@@ -9,8 +9,8 @@ fun main(args: Array<String>) {
     System.setProperty("ABAC_PDP_ENDPOINT_URL", "abac")
     System.setProperty("SRVHENVENDELSESARKIV2_USERNAME", "abacuser")
     System.setProperty("SRVHENVENDELSESARKIV2_PASSWORD", "abacpass")
-    System.setProperty("SECURITY-TOKEN-SERVICE-JWKS_URL", "")
-    System.setProperty("SECURITY-TOKEN-SERVICE-ISSUER_URL", "")
+    System.setProperty("SECURITY-TOKEN-SERVICE-JWKS_URL", "https://login.microsoftonline.com/navtestb2c.onmicrosoft.com/discovery/v2.0/keys?p=b2c_1a_idporten_ver1")
+    System.setProperty("SECURITY-TOKEN-SERVICE-ISSUER_URL", "https://login.microsoftonline.com/d38f25aa-eab8-4c50-9f28-ebf92c1256f2/v2.0/")
     System.setProperty("JWT_AUDIENCE", "AUD")
     System.setProperty("JWT_REALM", "REALM")
 

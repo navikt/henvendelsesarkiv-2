@@ -4,6 +4,7 @@ import io.ktor.application.ApplicationCall
 import io.ktor.application.call
 import io.ktor.application.install
 import io.ktor.auth.Authentication
+import io.ktor.auth.authenticate
 import io.ktor.auth.jwt.jwt
 import io.ktor.features.ContentNegotiation
 import io.ktor.gson.gson
@@ -38,7 +39,7 @@ data class SelftestStatus(val status: String, val applicationVersion: String)
 
 fun createHttpServer(port: Int = 7070, applicationVersion: String): ApplicationEngine = embeddedServer(Netty, port) {
     install(Authentication) {
-        jwt {
+        jwt("oidc-auth") {
             val jwtConfig = JwtConfig()
             realm = fasitProperties.jwtRealm
             verifier(jwtConfig.jwkProvider, fasitProperties.jwtIssuer)
@@ -58,7 +59,9 @@ fun createHttpServer(port: Int = 7070, applicationVersion: String): ApplicationE
 
     routing {
         accept(ContentType.Application.Json) {
-            jsonRoutes(applicationVersion)
+            authenticate("oidc-auth") {
+                jsonRoutes(applicationVersion)
+            }
         }
 
         accept(ContentType.Any) {
