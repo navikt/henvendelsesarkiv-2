@@ -12,10 +12,9 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.Parameters
 import io.ktor.pipeline.PipelineContext
+import io.ktor.request.header
 import io.ktor.request.receive
 import io.ktor.response.respond
-import io.ktor.response.respondText
-import io.ktor.response.respondTextWriter
 import io.ktor.response.respondWrite
 import io.ktor.routing.*
 import io.ktor.server.engine.ApplicationEngine
@@ -29,6 +28,7 @@ import no.nav.henvendelsesarkiv.jwt.JwtConfig
 import org.slf4j.LoggerFactory
 import java.time.LocalDateTime
 
+private const val REALM = "Henvendelsesarkiv JWT Realm"
 private val log = LoggerFactory.getLogger("henvendelsesarkiv.HttpServer")
 private val prometheusContentType = ContentType.parse(TextFormat.CONTENT_TYPE_004)
 private val pdpClient = PepClient(Decision.Deny)
@@ -41,7 +41,7 @@ fun createHttpServer(port: Int = 7070, applicationVersion: String): ApplicationE
     install(Authentication) {
         jwt("oidc-auth") {
             val jwtConfig = JwtConfig()
-            realm = fasitProperties.jwtRealm
+            realm = REALM
             verifier(jwtConfig.jwkProvider, fasitProperties.jwtIssuer)
             validate { credentials ->
                 jwtConfig.validate(credentials)
@@ -58,19 +58,16 @@ fun createHttpServer(port: Int = 7070, applicationVersion: String): ApplicationE
     }
 
     routing {
-        accept(ContentType.Application.Json) {
-            authenticate("oidc-auth") {
-                jsonRoutes(applicationVersion)
-            }
+        naisRoutes(applicationVersion)
+
+        authenticate("oidc-auth") {
+            arkivRoutes()
         }
 
-        accept(ContentType.Any) {
-            anyRoutes()
-        }
     }
 }.start()
 
-private fun Route.jsonRoutes(applicationVersion: String) {
+private fun Route.arkivRoutes() {
     get("/arkivpost/{arkivpostId}") {
         hentArkivpost()
     }
@@ -90,18 +87,10 @@ private fun Route.jsonRoutes(applicationVersion: String) {
     get("/arkivpost/aktoer/{aktørId}") {
         hentArkivpostForAktoer()
     }
-
-    get("/isAlive") {
-        call.respond(SelftestStatus(status = "I'm alive", applicationVersion = applicationVersion))
-    }
-
-    get("/isReady") {
-        call.respond(SelftestStatus(status = "I'm ready", applicationVersion = applicationVersion))
-    }
 }
 
 private suspend fun PipelineContext<Unit, ApplicationCall>.hentArkivpost() {
-    if (!checkAccess("", "")) call.respond(HttpStatusCode.Forbidden)
+    if (!checkAccess(call.request.header("Authorization"), "read")) call.respond(HttpStatusCode.Forbidden)
     val arkivpostId = call.parameters["arkivpostId"]?.toLong()
     if (arkivpostId == null) {
         call.respond(HttpStatusCode.BadRequest)
@@ -148,29 +137,26 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.hentArkivpostForAktoe
     }
 }
 
-private fun Route.anyRoutes() {
-    get("/fasitTest") {
-        call.respondText(fasitProperties.dbUsername, ContentType.Text.Plain)
-    }
-
+private fun Route.naisRoutes(applicationVersion: String) {
     get("/isAlive") {
-        call.respondText("I'm alive.", ContentType.Text.Plain)
+        call.respond(SelftestStatus(status = "I'm alive", applicationVersion = applicationVersion))
     }
 
     get("/isReady") {
-        call.respondText("I'm ready.", ContentType.Text.Plain)
+        call.respond(SelftestStatus(status = "I'm ready", applicationVersion = applicationVersion))
     }
 
     get("/prometheus") {
-        log.info("Responding to prometheus request.")
         val names = call.request.queryParameters.getAll("name[]")?.toSet() ?: setOf()
-        call.respondTextWriter(prometheusContentType) {
+        call.respondWrite(prometheusContentType) {
             TextFormat.write004(this, collectorRegistry.filteredMetricFamilySamples(names))
         }
     }
 }
 
-private fun checkAccess(token: String, action: String): Boolean {
+private fun checkAccess(bearerToken: String?, action: String): Boolean {
+    requireNotNull(bearerToken) {"Authorization token not set"}
+    val token = bearerToken!!.substringAfter(" ")
     return pdpClient.hasAccessToResource(extractBodyFromOidcToken(token),  action)
 }
 
