@@ -18,6 +18,13 @@ object XacmlResponseWrapperSpec : Spek({
                     wrapper.getDecision() `should equal` Decision.Deny
                 }
             }
+
+            on("Multiple advice") {
+                val wrapper = XacmlResponseWrapper(getResponse("xacml-response-multiple-advice.json"))
+                it("should have descision deny") {
+                    wrapper.getDecision() `should equal` Decision.Deny
+                }
+            }
         }
 
     }
