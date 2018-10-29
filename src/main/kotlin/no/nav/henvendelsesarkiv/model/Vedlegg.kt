@@ -1,6 +1,6 @@
 package no.nav.henvendelsesarkiv.model
 
-import no.nav.henvendelsesarkiv.boolverdi
+import no.nav.henvendelsesarkiv.db.boolverdi
 import org.springframework.jdbc.core.RowMapper
 import java.sql.ResultSet
 

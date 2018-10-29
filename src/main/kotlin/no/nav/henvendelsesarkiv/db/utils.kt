@@ -1,4 +1,4 @@
-package no.nav.henvendelsesarkiv
+package no.nav.henvendelsesarkiv.db
 
 import com.google.gson.*
 import java.sql.PreparedStatement

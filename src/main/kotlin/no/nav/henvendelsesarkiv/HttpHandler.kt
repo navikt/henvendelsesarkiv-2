@@ -12,6 +12,8 @@ import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import no.nav.henvendelsesarkiv.abac.Decision
 import no.nav.henvendelsesarkiv.abac.PepClient
+import no.nav.henvendelsesarkiv.db.localDateTimeDeserializer
+import no.nav.henvendelsesarkiv.db.localDateTimeSerializer
 import no.nav.henvendelsesarkiv.jwt.JwtConfig
 import no.nav.henvendelsesarkiv.routes.arkivpostRoutes
 import no.nav.henvendelsesarkiv.routes.naisRoutes

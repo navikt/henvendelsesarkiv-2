@@ -1,4 +1,4 @@
-package no.nav.henvendelsesarkiv
+package no.nav.henvendelsesarkiv.db
 
 import no.nav.henvendelsesarkiv.model.*
 import org.springframework.jdbc.core.JdbcTemplate
@@ -25,7 +25,7 @@ private const val VEDLEGG_SQL = """
 
 private const val TIMEOUT_FOR_JOBB_TIMER: Long = 4
 
-class DatabaseService constructor(private val jt: JdbcTemplate, private val useHsql: Boolean = false) {
+class DatabaseService constructor(private val jt: JdbcTemplate = hikariJdbcTemplate, private val useHsql: Boolean = false) {
 
     fun hentHenvendelse(id: Long): Arkivpost? {
         val arkivpostSql = "SELECT * FROM arkivpost WHERE arkivpostId = ?"
