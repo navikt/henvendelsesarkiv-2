@@ -5,7 +5,7 @@ val spekVersion = "1.1.5"
 val hsqlDbVersion = "2.4.1"
 val kluentVersion = "1.38"
 val khttpVersion = "0.1.0"
-val ktorVersion = "0.9.2"
+val ktorVersion = "0.9.5"
 val kotlinxVersion = "0.23.3"
 val slf4jVersion = "1.8.0-beta2"
 val jacksonVersion = "2.9.6"
@@ -41,6 +41,8 @@ dependencies {
     compile(kotlin("stdlib"))
     compile("io.ktor:ktor-server-netty:$ktorVersion")
     compile("io.ktor:ktor-gson:$ktorVersion")
+    compile("io.ktor:ktor-auth:$ktorVersion")
+    compile("io.ktor:ktor-auth-jwt:$ktorVersion")
     compile("org.slf4j:slf4j-simple:$slf4jVersion")
     compile("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
     compile("org.springframework:spring-jdbc:$springJdbcVersion")

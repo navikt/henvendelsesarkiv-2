@@ -18,7 +18,12 @@ systemProp.https.nonProxyHosts=localhost|127.0.0.1|*.local|*.adeo.no|*.nav.no|*.
 * Hent sertifikat for gradle her: https://plugins.gradle.org/m2/ (klikk på hengelåsen og last ned .cer-fil) og legg det i samme mappe.
 * Benytt F:\programvare\kse-51 eller skriv kommando på kommandolinje for å legge gradle-sertifikatet inn i nav-truststore-sertifikatet
 * Åpne folderen til prosjektet i IntelliJ og benytt IntelliJ sin gradle-wrapper.
+* Hvis nedlastinga henger på gradle, så kan det være proxy-settings i IntelliJ, den skal stå på auto detect
+* Du skal ikke se bort ifra at du må oppdatere Kotlin plugin også
 * Kryss fingrene, deretter: Tut og kjør!
+
+# Teste lokalt
+Fyll ut de manglende feltene i StartKtorLocal.kt, ved å legge inn verdier i `user.home/localstart.properties` og kjør
 
 ## Henvendelser
 

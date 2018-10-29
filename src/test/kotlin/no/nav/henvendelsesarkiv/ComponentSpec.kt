@@ -24,6 +24,10 @@ object ComponentSpec: Spek({
             System.setProperty("ABAC_PDP_ENDPOINT_URL", "abac")
             System.setProperty("SRVHENVENDELSESARKIV2_USERNAME", "abacuser")
             System.setProperty("SRVHENVENDELSESARKIV2_PASSWORD", "abacpass")
+            System.setProperty("SECURITY-TOKEN-SERVICE-JWKS_URL", "https://jwt-provider-domain/")
+            System.setProperty("SECURITY-TOKEN-SERVICE-ISSUER_URL", "https://jwt-provider-domain/")
+            System.setProperty("JWT_AUDIENCE", "Audience")
+
             app = createHttpServer(7070, "TESTING")
         }
 
@@ -37,13 +41,6 @@ object ComponentSpec: Spek({
                 it("isReady answers with 200") {
                     val response = khttp.get(url + "isReady")
                     response.statusCode `should equal` 200
-                }
-            }
-
-            on("checking fasit properties") {
-                it("fasitTest answers with jdbc user") {
-                    val response = khttp.get(url + "fasitTest")
-                    response.text `should equal` "jdbcUser"
                 }
             }
         }
