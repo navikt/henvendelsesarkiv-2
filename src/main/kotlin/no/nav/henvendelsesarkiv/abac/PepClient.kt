@@ -21,7 +21,7 @@ class PepClient(private val bias: Decision) {
 
     fun checkAccess(bearerToken: String?, action: String): Boolean {
         requireNotNull(bearerToken) {"Authorization token not set"}
-        val token = bearerToken!!.substringAfter(" ")
+        val token = bearerToken.substringAfter(" ")
         return hasAccessToResource(extractBodyFromOidcToken(token),  action)
     }
 

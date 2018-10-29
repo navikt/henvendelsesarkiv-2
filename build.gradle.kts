@@ -1,12 +1,12 @@
 import org.jetbrains.kotlin.gradle.dsl.Coroutines
 
-val junitJupiterVersion = "5.2.0"
+val junitJupiterVersion = "5.3.0"
 val spekVersion = "1.2.1"
 val hsqlDbVersion = "2.4.1"
-val kluentVersion = "1.38"
+val kluentVersion = "1.42"
 val khttpVersion = "0.1.0"
-val ktorVersion = "0.9.5"
-val kotlinxVersion = "0.23.3"
+val ktorVersion = "1.0.0-beta-3"
+val coroutinesVersion = "1.0.0"
 val slf4jVersion = "1.8.0-beta2"
 val springJdbcVersion = "5.1.1.RELEASE"
 val hikariCpVersion = "3.2.0"
@@ -16,7 +16,7 @@ val mainClass = "no.nav.henvendelsesarkiv.ApplicationKt"
 
 plugins {
     application
-    kotlin("jvm") version "1.2.60"
+    kotlin("jvm") version "1.3.0"
 }
 
 buildscript {
@@ -32,10 +32,6 @@ application {
     mainClassName = mainClass
 }
 
-kotlin {
-    experimental.coroutines = Coroutines.ENABLE
-}
-
 dependencies {
     compile(kotlin("stdlib"))
     compile("io.ktor:ktor-server-netty:$ktorVersion")
@@ -47,7 +43,7 @@ dependencies {
     compile("com.zaxxer:HikariCP:$hikariCpVersion")
     compile("io.prometheus:simpleclient_hotspot:$prometheusVersion")
     compile("io.prometheus:simpleclient_common:$prometheusVersion")
-    compile("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinxVersion")
+    compile("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
     compile("khttp:khttp:$khttpVersion")
 
     testCompile("org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion")

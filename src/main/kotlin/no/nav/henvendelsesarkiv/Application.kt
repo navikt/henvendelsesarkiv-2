@@ -1,6 +1,6 @@
 package no.nav.henvendelsesarkiv
 
-import kotlinx.coroutines.experimental.runBlocking
+import kotlinx.coroutines.runBlocking
 
 val fasitProperties = FasitProperties()
 

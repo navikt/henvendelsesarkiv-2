@@ -4,13 +4,13 @@ import io.ktor.application.ApplicationCall
 import io.ktor.application.call
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.Parameters
-import io.ktor.pipeline.PipelineContext
 import io.ktor.request.header
 import io.ktor.request.receive
 import io.ktor.response.respond
 import io.ktor.routing.Route
 import io.ktor.routing.get
 import io.ktor.routing.post
+import io.ktor.util.pipeline.PipelineContext
 import no.nav.henvendelsesarkiv.abac.PepClient
 import no.nav.henvendelsesarkiv.db.DatabaseService
 import no.nav.henvendelsesarkiv.db.lagDateTime
@@ -86,4 +86,3 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.hentArkivpostForAktoe
         call.respond(DatabaseService().hentHenvendelserForAktoer(aktoerId, fra, til, max))
     }
 }
-
