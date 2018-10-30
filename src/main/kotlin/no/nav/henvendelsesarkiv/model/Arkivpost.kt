@@ -1,7 +1,7 @@
 package no.nav.henvendelsesarkiv.model
 
-import no.nav.henvendelsesarkiv.boolverdi
-import no.nav.henvendelsesarkiv.lagDateTime
+import no.nav.henvendelsesarkiv.db.boolverdi
+import no.nav.henvendelsesarkiv.db.lagDateTime
 import org.springframework.jdbc.core.RowMapper
 import java.sql.ResultSet
 import java.time.LocalDateTime

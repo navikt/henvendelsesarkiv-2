@@ -4,15 +4,16 @@ import io.ktor.application.ApplicationCall
 import io.ktor.application.call
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.Parameters
-import io.ktor.pipeline.PipelineContext
 import io.ktor.request.header
 import io.ktor.request.receive
 import io.ktor.response.respond
 import io.ktor.routing.Route
 import io.ktor.routing.get
 import io.ktor.routing.post
-import no.nav.henvendelsesarkiv.*
+import io.ktor.util.pipeline.PipelineContext
 import no.nav.henvendelsesarkiv.abac.PepClient
+import no.nav.henvendelsesarkiv.db.DatabaseService
+import no.nav.henvendelsesarkiv.db.lagDateTime
 
 fun Route.arkivpostRoutes(pepClient: PepClient) {
 
@@ -23,7 +24,7 @@ fun Route.arkivpostRoutes(pepClient: PepClient) {
     }
 
     post("/arkivpost") {
-        call.respond(DatabaseService(hikariJdbcTemplate).opprettHenvendelse(call.receive()))
+        call.respond(DatabaseService().opprettHenvendelse(call.receive()))
     }
 
     get("/temagrupper/{aktørId}") {
@@ -44,7 +45,7 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.hentArkivpost() {
     if (arkivpostId == null) {
         call.respond(HttpStatusCode.BadRequest)
     } else {
-        val arkivpost = DatabaseService(hikariJdbcTemplate).hentHenvendelse(arkivpostId)
+        val arkivpost = DatabaseService().hentHenvendelse(arkivpostId)
         if (arkivpost == null) {
             call.respond(HttpStatusCode.NotFound)
         } else {
@@ -58,7 +59,7 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.hentTemagrupper() {
     if (aktoerId == null) {
         call.respond(HttpStatusCode.BadRequest)
     } else {
-        call.respond(DatabaseService(hikariJdbcTemplate).hentTemagrupper(aktoerId))
+        call.respond(DatabaseService().hentTemagrupper(aktoerId))
     }
 }
 
@@ -69,7 +70,7 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.settUtgaarDato() {
     if (arkivpostId == null || utgaarDato == null) {
         call.respond(HttpStatusCode.BadRequest)
     } else {
-        DatabaseService(hikariJdbcTemplate).settUtgaarDato(arkivpostId, utgaarDato)
+        DatabaseService().settUtgaarDato(arkivpostId, utgaarDato)
     }
 }
 
@@ -82,7 +83,6 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.hentArkivpostForAktoe
     if (aktoerId == null) {
         call.respond(HttpStatusCode.BadRequest)
     } else {
-        call.respond(DatabaseService(hikariJdbcTemplate).hentHenvendelserForAktoer(aktoerId, fra, til, max))
+        call.respond(DatabaseService().hentHenvendelserForAktoer(aktoerId, fra, til, max))
     }
 }
-

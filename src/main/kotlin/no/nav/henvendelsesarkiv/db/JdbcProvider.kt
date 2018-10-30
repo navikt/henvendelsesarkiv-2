@@ -1,7 +1,9 @@
-package no.nav.henvendelsesarkiv
+package no.nav.henvendelsesarkiv.db
 
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
+import no.nav.henvendelsesarkiv.FasitProperties
+import no.nav.henvendelsesarkiv.SingletonHolder
 import org.springframework.jdbc.core.JdbcTemplate
 
 class ConnectionPool private constructor(fasit: FasitProperties) {

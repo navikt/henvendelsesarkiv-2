@@ -1,4 +1,4 @@
-package no.nav.henvendelsesarkiv
+package no.nav.henvendelsesarkiv.db
 
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.datasource.SingleConnectionDataSource

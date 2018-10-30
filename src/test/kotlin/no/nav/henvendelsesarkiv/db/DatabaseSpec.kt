@@ -1,4 +1,4 @@
-package no.nav.henvendelsesarkiv
+package no.nav.henvendelsesarkiv.db
 
 import no.nav.henvendelsesarkiv.model.ArkivStatusType
 import no.nav.henvendelsesarkiv.model.Arkivpost
