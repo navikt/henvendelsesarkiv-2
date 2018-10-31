@@ -24,9 +24,9 @@ object ComponentSpec: Spek({
             System.setProperty("ABAC_PDP_ENDPOINT_URL", "abac")
             System.setProperty("SRVHENVENDELSESARKIV2_USERNAME", "abacuser")
             System.setProperty("SRVHENVENDELSESARKIV2_PASSWORD", "abacpass")
-            System.setProperty("SECURITY-TOKEN-SERVICE-JWKS_URL", "https://jwt-provider-domain/")
-            System.setProperty("SECURITY-TOKEN-SERVICE-ISSUER_URL", "https://jwt-provider-domain/")
-            System.setProperty("JWT_AUDIENCE", "Audience")
+            System.setProperty("SECURITY_TOKEN_SERVICE_JWKS_URL", "https://jwt-provider-domain/")
+            System.setProperty("SECURITY_TOKEN_SERVICE_ISSUER_URL", "https://jwt-provider-domain/")
+            System.setProperty("JWT_CLAIMS_AUDIENCE", "Audience")
 
             app = createHttpServer(7070, "TESTING")
         }

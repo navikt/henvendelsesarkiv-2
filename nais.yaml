@@ -28,12 +28,14 @@ fasitResources:
       - alias: henvendelsesarkivDataSource
         resourceType: DataSource
       - alias: appdynamics
-        resourceType: applicationproperties
+        resourceType: ApplicationProperties
       - alias: srvhenvendelsesarkiv2
-        resourceType: credential
+        resourceType: Credential
       - alias: abac.pdp.endpoint
         resourceType: RestService
       - alias: security-token-service-jwks
         resourceType: BaseUrl
       - alias: security-token-service-issuer
         resourceType: BaseUrl
+      - alias: jwt_claims
+        resourceType: ApplicationProperties

@@ -9,9 +9,9 @@ data class FasitProperties(
         val abacEndpoint: String = getEnvVar("ABAC_PDP_ENDPOINT_URL"),
         val abacUser: String = getEnvVar("SRVHENVENDELSESARKIV2_USERNAME"),
         val abacPass: String = getEnvVar("SRVHENVENDELSESARKIV2_PASSWORD"),
-        val jwksUrl: String = getEnvVar("SECURITY-TOKEN-SERVICE-JWKS_URL"),
-        val jwtIssuer: String = getEnvVar("SECURITY-TOKEN-SERVICE-ISSUER_URL"),
-        val jwtAudience: String = getEnvVar("JWT_AUDIENCE")
+        val jwksUrl: String = getEnvVar("SECURITY_TOKEN_SERVICE_JWKS_URL"),
+        val jwtIssuer: String = getEnvVar("SECURITY_TOKEN_SERVICE_ISSUER_URL"),
+        val jwtAudience: String = getEnvVar("JWT_CLAIMS_AUDIENCE")
 )
 
 fun getEnvVar(name: String, default: String? = null): String =
