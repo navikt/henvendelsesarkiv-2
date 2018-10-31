@@ -34,7 +34,7 @@ fasitResources:
       - alias: abac.pdp.endpoint
         resourceType: RestService
       - alias: security-token-service-jwks
-        resourceType: BaseUrl
+        resourceType: RestService
       - alias: security-token-service-issuer
         resourceType: BaseUrl
       - alias: jwt_claims
