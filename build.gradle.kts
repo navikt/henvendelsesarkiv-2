@@ -11,6 +11,7 @@ val logbackVersion = "1.2.3"
 val springJdbcVersion = "5.1.1.RELEASE"
 val hikariCpVersion = "3.2.0"
 val prometheusVersion = "0.4.0"
+val ojdbcVersion = "11.2.0.3"
 
 val mainClass = "no.nav.henvendelsesarkiv.ApplicationKt"
 
@@ -45,6 +46,7 @@ dependencies {
     compile("io.prometheus:simpleclient_common:$prometheusVersion")
     compile("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
     compile("khttp:khttp:$khttpVersion")
+    runtime("com.oracle:ojdbc6:$ojdbcVersion")
 
     testCompile("org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion")
     testCompile("org.junit.jupiter:junit-jupiter-params:$junitJupiterVersion")
@@ -64,6 +66,7 @@ repositories {
     maven("https://repo.adeo.no/repository/maven-central")
     maven("https://plugins.gradle.org/m2/")
     maven("https://dl.bintray.com/kotlin/ktor/")
+    maven("http://repo.spring.io/plugins-release/")
     jcenter()
     mavenCentral()
 }
