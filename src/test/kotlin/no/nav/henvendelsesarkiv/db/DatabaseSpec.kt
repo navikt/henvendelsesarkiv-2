@@ -63,6 +63,11 @@ object DatabaseSpec : Spek({
                     val arkivpost = db.hentHenvendelse(1)
                     arkivpost?.vedleggListe?.size `should equal` 2
                 }
+
+                it("should have valid dokument") {
+                    val arkivpost = db.hentHenvendelse(1)
+                    arkivpost?.vedleggListe?.get(0)?.dokument `should not be` null
+                }
             }
 
             on("update utgår dato") {

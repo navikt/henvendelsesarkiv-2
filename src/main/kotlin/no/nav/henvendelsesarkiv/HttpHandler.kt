@@ -2,7 +2,6 @@ package no.nav.henvendelsesarkiv
 
 import io.ktor.application.install
 import io.ktor.auth.Authentication
-import io.ktor.auth.authenticate
 import io.ktor.auth.jwt.jwt
 import io.ktor.features.ContentNegotiation
 import io.ktor.gson.gson
@@ -12,6 +11,7 @@ import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import no.nav.henvendelsesarkiv.abac.Decision
 import no.nav.henvendelsesarkiv.abac.PepClient
+import no.nav.henvendelsesarkiv.db.byteArrayToBase64Serializer
 import no.nav.henvendelsesarkiv.db.localDateTimeDeserializer
 import no.nav.henvendelsesarkiv.db.localDateTimeSerializer
 import no.nav.henvendelsesarkiv.jwt.JwtConfig
@@ -37,6 +37,7 @@ fun createHttpServer(port: Int = 7070, applicationVersion: String): ApplicationE
         gson {
             registerTypeAdapter(LocalDateTime::class.java, localDateTimeSerializer)
             registerTypeAdapter(LocalDateTime::class.java, localDateTimeDeserializer)
+            registerTypeAdapter(ByteArray::class.java, byteArrayToBase64Serializer)
             setPrettyPrinting()
         }
     }

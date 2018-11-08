@@ -66,3 +66,7 @@ val localDateTimeSerializer: JsonSerializer<LocalDateTime> = JsonSerializer { sr
 val localDateTimeDeserializer: JsonDeserializer<LocalDateTime> = JsonDeserializer<LocalDateTime> { json, _, _ ->
     if (json == null) null else LocalDateTime.parse(json.asString, formatter)
 }
+
+val byteArrayToBase64Serializer: JsonSerializer<ByteArray> = JsonSerializer { src, _, _ ->
+    if (src == null) null else JsonPrimitive(Base64.getEncoder().encodeToString(src))
+}
