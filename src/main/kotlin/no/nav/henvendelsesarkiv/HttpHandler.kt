@@ -44,9 +44,9 @@ fun createHttpServer(port: Int = 7070, applicationVersion: String): ApplicationE
     routing {
         naisRoutes(applicationVersion)
 
-        authenticate {
-            arkivpostRoutes(PepClient(Decision.Deny))
-        }
+        //authenticate {
+        arkivpostRoutes(PepClient(Decision.Deny))
+        //}
 
     }
 }.start()

@@ -5,6 +5,11 @@ import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.PreparedStatementSetter
 import java.sql.Timestamp
 import java.time.LocalDateTime
+import no.nav.henvendelsesarkiv.model.Arkivpost
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
+import java.util.ArrayList
+
+
 
 private const val ARKIVPOST_SQL = """
             INSERT INTO arkivpost(arkivpostId, arkivertDato, mottattDato, utgaarDato, temagruppe, arkivpostType, dokumentType,
@@ -58,7 +63,9 @@ class DatabaseService constructor(private val jt: JdbcTemplate = hikariJdbcTempl
             ORDER BY mottattDato DESC
         """.trimIndent(), max)
 
-        return jt.query(sql, setParams(aktoerId, fra, til), ArkivpostMapper())
+        val arkivposter = jt.query(sql, setParams(aktoerId, fra, til), ArkivpostMapper())
+        leggTilVedlegg(arkivposter)
+        return arkivposter
     }
 
     fun settUtgaarDato(arkivpostId: Long, dato: LocalDateTime) {
@@ -138,5 +145,18 @@ class DatabaseService constructor(private val jt: JdbcTemplate = hikariJdbcTempl
             fra?.let { ps.setTimestamp(i++, Timestamp(hentMillisekunder(it))) }
             til?.let { ps.setTimestamp(i++, Timestamp(hentMillisekunder(it))) }
         }
+    }
+
+    private fun leggTilVedlegg(arkivposter: List<Arkivpost>) {
+        val alleId = arkivposter.map { it.arkivpostId }.toList()
+        val alleVedlegg = ArrayList<Vedlegg>()
+        alleId.asSequence().chunked(1000).forEach {
+            alleVedlegg.addAll(jt.query("select * from vedlegg where arkivpostId in (${it.joinToString(",")})", VedleggMapper()))
+        }
+        alleVedlegg.forEach {
+            val ap = arkivposter.find { a -> a.arkivpostId == it.arkivpostId }
+            ap?.let { a -> a.vedleggListe.add(it) }
+        }
+
     }
 }

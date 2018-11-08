@@ -77,11 +77,11 @@ object DatabaseSpec : Spek({
             }
 
             on("insert multiple arkivposter") {
-                db.opprettHenvendelse(lagTomArkivpost(0))
-                db.opprettHenvendelse(lagTomArkivpost(1))
-                db.opprettHenvendelse(lagTomArkivpost(2))
-                db.opprettHenvendelse(lagTomArkivpost(3))
-                db.opprettHenvendelse(lagTomArkivpost(4))
+                db.opprettHenvendelse(lagArkivpostMedVedlegg(0))
+                db.opprettHenvendelse(lagArkivpostMedVedlegg(1))
+                db.opprettHenvendelse(lagArkivpostMedVedlegg(2))
+                db.opprettHenvendelse(lagArkivpostMedVedlegg(3))
+                db.opprettHenvendelse(lagArkivpostMedVedlegg(4))
 
                 it("should contain 5 arkivposter") {
                     val liste = db.hentHenvendelserForAktoer("AKTØRID1", null, null, null)
@@ -96,6 +96,14 @@ object DatabaseSpec : Spek({
                 it("should be in right interval") {
                     val liste = db.hentHenvendelserForAktoer("AKTØRID1", LocalDateTime.now().plusHours(1), LocalDateTime.now().plusHours(3), null)
                     liste.size `should equal` 2
+                }
+
+                it("should contain vedlegg") {
+                    val liste = db.hentHenvendelserForAktoer("AKTØRID1", null, null, null)
+                    val arkivpost = liste[0]
+                    arkivpost.vedleggListe.size `should equal` 2
+                    val vedlegg = arkivpost.vedleggListe[0]
+                    vedlegg.filnavn `should equal` "FILNAVN"
                 }
             }
 

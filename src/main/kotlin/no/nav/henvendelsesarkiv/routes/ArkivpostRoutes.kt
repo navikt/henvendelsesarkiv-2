@@ -18,8 +18,8 @@ import no.nav.henvendelsesarkiv.db.lagDateTime
 fun Route.arkivpostRoutes(pepClient: PepClient) {
 
     get("/arkivpost/{arkivpostId}") {
-        if (!pepClient.checkAccess(call.request.header("Authorization"), "read"))
-            call.respond(HttpStatusCode.Forbidden)
+        /*if (!pepClient.checkAccess(call.request.header("Authorization"), "read"))
+            call.respond(HttpStatusCode.Forbidden)*/
         hentArkivpost()
     }
 
