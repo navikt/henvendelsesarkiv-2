@@ -7,8 +7,7 @@ import java.sql.Timestamp
 import java.time.LocalDateTime
 import no.nav.henvendelsesarkiv.model.Arkivpost
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
-import java.util.ArrayList
-
+import java.util.*
 
 
 private const val ARKIVPOST_SQL = """
@@ -125,7 +124,7 @@ class DatabaseService constructor(private val jt: JdbcTemplate = hikariJdbcTempl
             setString(it, 5, vedlegg.tittel)
             setString(it, 6, vedlegg.brevkode)
             setBoolean(it, 7, vedlegg.strukturert)
-            setBlob(it, 8, vedlegg.dokument)
+            setBlob(it, 8, Base64.getDecoder().decode(vedlegg.dokument))
         }
     }
 

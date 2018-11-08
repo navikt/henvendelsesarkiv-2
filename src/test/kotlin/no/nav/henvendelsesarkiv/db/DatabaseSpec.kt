@@ -8,6 +8,7 @@ import org.jetbrains.spek.api.*
 import org.jetbrains.spek.api.dsl.*
 import org.springframework.jdbc.core.JdbcTemplate
 import java.time.LocalDateTime
+import java.util.*
 
 object DatabaseSpec : Spek({
     lateinit var jt: JdbcTemplate
@@ -193,7 +194,7 @@ private fun lagVedlegg(): Vedlegg {
             "TITTEL",
             "BREVKODE",
             true,
-            "DOKUMENT".toByteArray()
+            Base64.getEncoder().encodeToString("DOKUMENT".toByteArray())
     )
 }
 

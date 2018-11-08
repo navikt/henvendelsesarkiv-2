@@ -3,6 +3,7 @@ package no.nav.henvendelsesarkiv.model
 import no.nav.henvendelsesarkiv.db.boolverdi
 import org.springframework.jdbc.core.RowMapper
 import java.sql.ResultSet
+import java.util.*
 
 data class Vedlegg(
         val arkivpostId: Long,
@@ -12,7 +13,7 @@ data class Vedlegg(
         val tittel: String?,
         val brevkode: String?,
         val strukturert: Boolean,
-        val dokument: ByteArray?
+        val dokument: String?
 )
 
 class VedleggMapper : RowMapper<Vedlegg> {
@@ -25,7 +26,7 @@ class VedleggMapper : RowMapper<Vedlegg> {
                 rs.getString("tittel"),
                 rs.getString("brevkode"),
                 boolverdi(rs.getInt("strukturert")),
-                rs.getBytes("dokument")
+                rs.getBytes("dokument")?.let { Base64.getEncoder().encodeToString(it) }
         )
     }
 }
