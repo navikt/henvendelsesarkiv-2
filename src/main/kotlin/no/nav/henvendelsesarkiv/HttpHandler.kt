@@ -37,6 +37,7 @@ fun createHttpServer(port: Int = 7070, applicationVersion: String): ApplicationE
             registerTypeAdapter(LocalDateTime::class.java, localDateTimeSerializer)
             registerTypeAdapter(LocalDateTime::class.java, localDateTimeDeserializer)
             setPrettyPrinting()
+            disableHtmlEscaping()
         }
     }
 
