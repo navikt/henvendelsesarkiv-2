@@ -6,7 +6,6 @@ import org.springframework.jdbc.core.PreparedStatementSetter
 import java.sql.Timestamp
 import java.time.LocalDateTime
 import no.nav.henvendelsesarkiv.model.Arkivpost
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
 import java.util.*
 
 
@@ -154,7 +153,7 @@ class DatabaseService constructor(private val jt: JdbcTemplate = hikariJdbcTempl
         }
         alleVedlegg.forEach {
             val ap = arkivposter.find { a -> a.arkivpostId == it.arkivpostId }
-            ap?.let { a -> a.vedleggListe.add(it) }
+            ap?.vedleggListe?.add(it)
         }
 
     }

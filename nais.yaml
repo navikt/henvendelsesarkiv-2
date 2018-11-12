@@ -39,3 +39,10 @@ fasitResources:
         resourceType: BaseUrl
       - alias: jwt.claims
         resourceType: ApplicationProperties
+    exposed:
+      - alias: henvendelsesarkiv.arkivpost
+        resourceType: RestService
+        path: /arkivpost
+      - alias: henvendelsesarkiv.temagrupper
+        resourceType: RestService
+        path: /temagrupper

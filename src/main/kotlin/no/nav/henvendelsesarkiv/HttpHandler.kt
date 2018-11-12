@@ -49,4 +49,4 @@ fun createHttpServer(port: Int = 7070, applicationVersion: String): ApplicationE
         //}
 
     }
-}.start()
+}.start(wait = true)
