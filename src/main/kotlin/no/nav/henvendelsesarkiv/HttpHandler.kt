@@ -20,7 +20,7 @@ import java.time.LocalDateTime
 
 private const val REALM = "Henvendelsesarkiv JWT Realm"
 
-fun createHttpServer(port: Int = 7070, applicationVersion: String): ApplicationEngine = embeddedServer(Netty, port) {
+fun createHttpServer(port: Int = 7070, applicationVersion: String, wait: Boolean = true): ApplicationEngine = embeddedServer(Netty, port) {
     install(Authentication) {
         jwt {
             val jwtConfig = JwtConfig()
@@ -49,4 +49,4 @@ fun createHttpServer(port: Int = 7070, applicationVersion: String): ApplicationE
         //}
 
     }
-}.start(wait = true)
+}.start(wait = wait)
