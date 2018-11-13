@@ -13,8 +13,11 @@ import io.ktor.util.pipeline.PipelineContext
 import no.nav.henvendelsesarkiv.abac.PepClient
 import no.nav.henvendelsesarkiv.db.DatabaseService
 import no.nav.henvendelsesarkiv.db.lagDateTime
+import org.slf4j.LoggerFactory
 
 fun Route.arkivpostRoutes(pepClient: PepClient) {
+    val log = LoggerFactory.getLogger("henvendelsesarkiv.ArkivpostRoutes")
+
 
     get("/arkivpost/{arkivpostId}") {
         /*if (!pepClient.checkAccess(call.request.header("Authorization"), "read"))
@@ -23,6 +26,8 @@ fun Route.arkivpostRoutes(pepClient: PepClient) {
     }
 
     post("/arkivpost") {
+        log.info("#### Call received ####")
+        log.info(call.receive())
         call.respond(DatabaseService().opprettHenvendelse(call.receive()))
     }
 
