@@ -6,6 +6,7 @@ import org.springframework.jdbc.core.PreparedStatementSetter
 import java.sql.Timestamp
 import java.time.LocalDateTime
 import no.nav.henvendelsesarkiv.model.Arkivpost
+import org.slf4j.LoggerFactory
 import java.util.*
 
 
@@ -30,6 +31,8 @@ private const val TIMEOUT_FOR_JOBB_TIMER: Long = 4
 
 class DatabaseService constructor(private val jt: JdbcTemplate = hikariJdbcTemplate, private val useHsql: Boolean = false) {
 
+    val log = LoggerFactory.getLogger("henvendelsesarkiv.ArkivpostRoutes")
+
     fun hentHenvendelse(id: Long): Arkivpost? {
         val arkivpostSql = "SELECT * FROM arkivpost WHERE arkivpostId = ?"
         val vedleggSql = "SELECT * FROM vedlegg WHERE arkivpostId = ?"
@@ -41,9 +44,13 @@ class DatabaseService constructor(private val jt: JdbcTemplate = hikariJdbcTempl
     }
 
     fun opprettHenvendelse(arkivpost: Arkivpost): Long {
+        log.info("#### DB start ####")
         arkivpost.arkivpostId = nextSequenceValue()
+        log.info("#### next value: " + arkivpost.arkivpostId +  "####")
         insertIntoDb(arkivpost)
-        arkivpost.vedleggListe.forEach{ opprettVedlegg(arkivpost.arkivpostId, it) }
+        log.info("#### DB end ####")
+        //TODO: for test.
+        //arkivpost.vedleggListe.forEach{ opprettVedlegg(arkivpost.arkivpostId, it) }
         return arkivpost.arkivpostId
     }
 

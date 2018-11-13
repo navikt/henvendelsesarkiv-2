@@ -28,7 +28,13 @@ fun Route.arkivpostRoutes(pepClient: PepClient) {
     post("/arkivpost") {
         log.info("#### Call received ####")
         log.info(call.receive())
-        call.respond(DatabaseService().opprettHenvendelse(call.receive()))
+        val arkivpostId = DatabaseService().opprettHenvendelse(call.receive())
+        if(arkivpostId == null) {
+            call.respond(HttpStatusCode.InternalServerError);
+        } else {
+            log.info("#### DB SAVE OK: " + arkivpostId + " ####")
+            call.respond(arkivpostId)
+        }
     }
 
     get("/temagrupper/{aktørId}") {
