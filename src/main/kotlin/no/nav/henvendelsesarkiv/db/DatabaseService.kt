@@ -122,6 +122,7 @@ class DatabaseService constructor(private val jt: JdbcTemplate = hikariJdbcTempl
     }
 
     private fun opprettVedlegg(arkivpostId: Long, vedlegg: Vedlegg) {
+
         jt.update(VEDLEGG_SQL) {
             setLong(it, 1, arkivpostId)
             setString(it, 2, vedlegg.filnavn)
