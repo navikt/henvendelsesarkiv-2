@@ -51,7 +51,7 @@ class DatabaseService constructor(private val jt: JdbcTemplate = hikariJdbcTempl
         log.info("#### DB end ####")
         //TODO: for test.
         //arkivpost.vedleggListe.forEach{ opprettVedlegg(arkivpost.arkivpostId, it) }
-        return arkivpost.arkivpostId
+        return arkivpost.arkivpostId!!
     }
 
     fun hentTemagrupper(aktoerId: String): List<ArkivpostTemagruppe> {

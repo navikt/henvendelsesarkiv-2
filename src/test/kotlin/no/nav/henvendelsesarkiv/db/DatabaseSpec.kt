@@ -74,7 +74,7 @@ object DatabaseSpec : Spek({
 //            }
 
             on("update utgår dato") {
-                val nyTid = LocalDateTime.now().plusHours(5)
+                val nyTid = LocalDateTime.now().plusHours(5).withNano(0)
                 db.opprettHenvendelse(lagTomArkivpost())
                 db.settUtgaarDato(1, nyTid)
 
