@@ -16,6 +16,7 @@ healthcheck:
 prometheus:
     enabled: true
     path: /prometheus
+alertProfiles: basic
 resources:
     limits:
       cpu: 1500m
