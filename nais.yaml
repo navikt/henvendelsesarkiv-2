@@ -16,7 +16,6 @@ healthcheck:
 prometheus:
     enabled: true
     path: /prometheus
-alertProfiles: basic
 resources:
     limits:
       cpu: 1500m
@@ -47,3 +46,5 @@ fasitResources:
       - alias: henvendelsesarkiv.temagrupper
         resourceType: RestService
         path: /temagrupper
+alertProfiles:
+  - common-java-modules
