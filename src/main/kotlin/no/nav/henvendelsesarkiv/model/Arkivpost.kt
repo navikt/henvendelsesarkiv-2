@@ -7,7 +7,7 @@ import java.sql.ResultSet
 import java.time.LocalDateTime
 
 data class Arkivpost(
-    var arkivpostId: Long?,
+    var arkivpostId: Long? = null,
     val arkivertDato: LocalDateTime?,
     val mottattDato: LocalDateTime?,
     val utgaarDato: LocalDateTime?,

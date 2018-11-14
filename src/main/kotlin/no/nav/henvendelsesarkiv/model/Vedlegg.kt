@@ -6,7 +6,7 @@ import java.sql.ResultSet
 import java.util.*
 
 data class Vedlegg(
-        val arkivpostId: Long?,
+        val arkivpostId: Long,
         val filnavn: String?,
         val filtype: String?,
         val variantformat: String?,

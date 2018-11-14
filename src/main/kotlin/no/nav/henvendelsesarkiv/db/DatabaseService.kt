@@ -49,8 +49,8 @@ class DatabaseService constructor(private val jt: JdbcTemplate = hikariJdbcTempl
         log.info("#### next value: " + arkivpost.arkivpostId +  "####")
         insertIntoDb(arkivpost)
         log.info("#### DB end ####")
-        //TODO: for test.
-        //arkivpost.vedleggListe.forEach{ opprettVedlegg(arkivpost.arkivpostId, it) }
+
+        arkivpost.vedleggListe.forEach{ opprettVedlegg(arkivpost.arkivpostId!!, it) }
         return arkivpost.arkivpostId!!
     }
 
