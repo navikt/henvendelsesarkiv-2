@@ -3,6 +3,7 @@ package no.nav.henvendelsesarkiv
 import io.ktor.application.install
 import io.ktor.auth.Authentication
 import io.ktor.auth.jwt.jwt
+import io.ktor.features.CallLogging
 import io.ktor.features.ContentNegotiation
 import io.ktor.gson.gson
 import io.ktor.routing.*
@@ -40,6 +41,8 @@ fun createHttpServer(port: Int = 7070, applicationVersion: String, wait: Boolean
             disableHtmlEscaping()
         }
     }
+
+    install(CallLogging)
 
     routing {
         naisRoutes(applicationVersion)

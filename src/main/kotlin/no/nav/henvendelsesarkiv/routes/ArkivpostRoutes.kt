@@ -29,7 +29,7 @@ fun Route.arkivpostRoutes(pepClient: PepClient) {
         log.info("#### Call received ####")
         log.info(call.receive())
         val arkivpostId = DatabaseService().opprettHenvendelse(call.receive())
-        if(arkivpostId == null) {
+        if (arkivpostId == null) {
             call.respond(HttpStatusCode.InternalServerError);
         } else {
             log.info("#### DB SAVE OK: " + arkivpostId + " ####")
