@@ -13,6 +13,7 @@ import io.ktor.util.pipeline.PipelineContext
 import no.nav.henvendelsesarkiv.abac.PepClient
 import no.nav.henvendelsesarkiv.db.DatabaseService
 import no.nav.henvendelsesarkiv.db.lagDateTime
+import no.nav.henvendelsesarkiv.model.Arkivpost
 import org.slf4j.LoggerFactory
 
 fun Route.arkivpostRoutes(pepClient: PepClient) {
@@ -26,15 +27,9 @@ fun Route.arkivpostRoutes(pepClient: PepClient) {
     }
 
     post("/arkivpost") {
-        log.info("#### Call received ####")
-        log.info(call.receive())
-        val arkivpostId = DatabaseService().opprettHenvendelse(call.receive())
-        if (arkivpostId == null) {
-            call.respond(HttpStatusCode.InternalServerError);
-        } else {
-            log.info("#### DB SAVE OK: " + arkivpostId + " ####")
-            call.respond(arkivpostId)
-        }
+        val arkivpost: Arkivpost = call.receive()
+        val arkivpostId = DatabaseService().opprettHenvendelse(arkivpost)
+        call.respond(arkivpostId)
     }
 
     get("/temagrupper/{aktørId}") {

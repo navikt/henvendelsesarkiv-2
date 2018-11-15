@@ -6,6 +6,7 @@ import io.ktor.auth.jwt.jwt
 import io.ktor.features.CallLogging
 import io.ktor.features.ContentNegotiation
 import io.ktor.gson.gson
+import io.ktor.http.ContentType
 import io.ktor.routing.*
 import io.ktor.server.engine.ApplicationEngine
 import io.ktor.server.engine.embeddedServer
@@ -48,7 +49,9 @@ fun createHttpServer(port: Int = 7070, applicationVersion: String, wait: Boolean
         naisRoutes(applicationVersion)
 
         //authenticate {
-        arkivpostRoutes(PepClient(Decision.Deny))
+        accept(ContentType.Application.Json) {
+            arkivpostRoutes(PepClient(Decision.Deny))
+        }
         //}
 
     }
