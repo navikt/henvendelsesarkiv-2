@@ -52,6 +52,9 @@ fun createHttpServer(port: Int = 7070, applicationVersion: String, wait: Boolean
         accept(ContentType.Application.Json) {
             arkivpostRoutes(PepClient(Decision.Deny))
         }
+        accept(ContentType.Application.FormUrlEncoded) {
+            arkivpostRoutes(PepClient(Decision.Deny))
+        }
         //}
 
     }

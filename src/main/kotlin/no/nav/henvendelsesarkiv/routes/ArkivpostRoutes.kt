@@ -76,7 +76,9 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.settUtgaarDato() {
         call.respond(HttpStatusCode.BadRequest)
     } else {
         DatabaseService().settUtgaarDato(arkivpostId, utgaarDato)
+        call.respond(HttpStatusCode.OK)
     }
+    //TODO: Burde det kastes 500-feil om den kommer hit? Gjelder kanskje flere tjenestekall?
 }
 
 private suspend fun PipelineContext<Unit, ApplicationCall>.hentArkivpostForAktoer() {
