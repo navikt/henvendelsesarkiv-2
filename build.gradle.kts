@@ -5,8 +5,7 @@ val spekVersion = "1.2.1"
 val hsqlDbVersion = "2.4.1"
 val kluentVersion = "1.42"
 val khttpVersion = "0.1.0"
-val ktorVersion = "1.0.0-beta-3"
-val coroutinesVersion = "1.0.0"
+val ktorVersion = "1.0.0"
 val logbackVersion = "1.2.3"
 val springJdbcVersion = "5.1.1.RELEASE"
 val hikariCpVersion = "3.2.0"
@@ -44,7 +43,6 @@ dependencies {
     compile("com.zaxxer:HikariCP:$hikariCpVersion")
     compile("io.prometheus:simpleclient_hotspot:$prometheusVersion")
     compile("io.prometheus:simpleclient_common:$prometheusVersion")
-    compile("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
     compile("khttp:khttp:$khttpVersion")
     runtime("com.oracle:ojdbc6:$ojdbcVersion")
 

@@ -6,9 +6,6 @@ import org.jetbrains.spek.api.*
 import org.jetbrains.spek.api.dsl.*
 import java.util.concurrent.TimeUnit
 
-const val APP_NAME: String = "Application"
-const val APP_VERSION: String = "1.0"
-
 object ComponentSpec: Spek({
     lateinit var app: ApplicationEngine
     val url = "http://localhost:7070/"
@@ -16,14 +13,14 @@ object ComponentSpec: Spek({
     describe("Integration tests") {
 
         beforeGroup {
-            System.setProperty("APP_NAME", APP_NAME)
-            System.setProperty("APP_VERSION", APP_VERSION)
-            System.setProperty("HENVENDELSESARKIVDATASOURCE_URL", "jdbcUrl")
-            System.setProperty("HENVENDELSESARKIVDATASOURCE_USERNAME", "jdbcUser")
-            System.setProperty("HENVENDELSESARKIVDATASOURCE_PASSWORD", "jdbcPass")
-            System.setProperty("ABAC_PDP_ENDPOINT_URL", "abac")
-            System.setProperty("SRVHENVENDELSESARKIV2_USERNAME", "abacuser")
-            System.setProperty("SRVHENVENDELSESARKIV2_PASSWORD", "abacpass")
+            System.setProperty("APP_NAME", "")
+            System.setProperty("APP_VERSION", "")
+            System.setProperty("HENVENDELSESARKIVDATASOURCE_URL", "")
+            System.setProperty("HENVENDELSESARKIVDATASOURCE_USERNAME", "")
+            System.setProperty("HENVENDELSESARKIVDATASOURCE_PASSWORD", "")
+            System.setProperty("ABAC_PDP_ENDPOINT_URL", "")
+            System.setProperty("SRVHENVENDELSESARKIV2_USERNAME", "")
+            System.setProperty("SRVHENVENDELSESARKIV2_PASSWORD", "")
             System.setProperty("SECURITY_TOKEN_SERVICE_JWKS_URL", "https://jwt-provider-domain/")
             System.setProperty("SECURITY_TOKEN_SERVICE_ISSUER_URL", "https://jwt-provider-domain/")
             System.setProperty("JWT_CLAIMS_AUDIENCE", "Audience")
