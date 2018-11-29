@@ -18,7 +18,8 @@ import no.nav.henvendelsesarkiv.abac.PepClient
 import no.nav.henvendelsesarkiv.db.localDateTimeDeserializer
 import no.nav.henvendelsesarkiv.db.localDateTimeSerializer
 import no.nav.henvendelsesarkiv.jwt.JwtConfig
-import no.nav.henvendelsesarkiv.routes.arkivpostRoutes
+import no.nav.henvendelsesarkiv.routes.arkivpostReadRoutes
+import no.nav.henvendelsesarkiv.routes.arkivpostWriteRoutes
 import no.nav.henvendelsesarkiv.routes.naisRoutes
 import org.slf4j.event.Level
 import java.time.LocalDateTime
@@ -55,7 +56,11 @@ fun createHttpServer(port: Int = 7070, applicationVersion: String, wait: Boolean
 
         authenticate {
             accept(ContentType.Application.Json) {
-                arkivpostRoutes(PepClient(Decision.Deny))
+                arkivpostReadRoutes(PepClient(Decision.Deny))
+            }
+
+            accept(ContentType.Application.FormUrlEncoded) {
+                arkivpostWriteRoutes(PepClient(Decision.Deny))
             }
         }
 

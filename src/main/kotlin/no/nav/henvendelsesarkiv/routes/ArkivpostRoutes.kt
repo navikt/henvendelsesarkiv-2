@@ -16,20 +16,11 @@ import no.nav.henvendelsesarkiv.db.DatabaseService
 import no.nav.henvendelsesarkiv.db.lagDateTime
 import no.nav.henvendelsesarkiv.model.Arkivpost
 
-fun Route.arkivpostRoutes(pepClient: PepClient) {
-
+fun Route.arkivpostReadRoutes(pepClient: PepClient) {
     get("/arkivpost/{arkivpostId}") {
         if (!pepClient.checkAccess(call.request.header("Authorization"), "read"))
             call.respond(HttpStatusCode.Forbidden)
         hentArkivpost()
-    }
-
-    post("/arkivpost") {
-        if (!pepClient.checkAccess(call.request.header("Authorization"), "create"))
-            call.respond(HttpStatusCode.Forbidden)
-        val arkivpost: Arkivpost = call.receive()
-        val arkivpostId = DatabaseService().opprettHenvendelse(arkivpost)
-        call.respond(arkivpostId)
     }
 
     get("/temagrupper/{aktørId}") {
@@ -38,16 +29,26 @@ fun Route.arkivpostRoutes(pepClient: PepClient) {
         hentTemagrupper()
     }
 
+    get("/arkivpost/aktoer/{aktørId}") {
+        if (!pepClient.checkAccess(call.request.header("Authorization"), "read"))
+            call.respond(HttpStatusCode.Forbidden)
+        hentArkivpostForAktoer()
+    }
+}
+
+fun Route.arkivpostWriteRoutes(pepClient: PepClient) {
     post("/arkivpost/{arkivpostId}/utgaar") {
         if (!pepClient.checkAccess(call.request.header("Authorization"), "update"))
             call.respond(HttpStatusCode.Forbidden)
         settUtgaarDato()
     }
 
-    get("/arkivpost/aktoer/{aktørId}") {
-        if (!pepClient.checkAccess(call.request.header("Authorization"), "read"))
+    post("/arkivpost") {
+        if (!pepClient.checkAccess(call.request.header("Authorization"), "create"))
             call.respond(HttpStatusCode.Forbidden)
-        hentArkivpostForAktoer()
+        val arkivpost: Arkivpost = call.receive()
+        val arkivpostId = DatabaseService().opprettHenvendelse(arkivpost)
+        call.respond(arkivpostId)
     }
 }
 
