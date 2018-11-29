@@ -17,7 +17,6 @@ fun main(args: Array<String>) {
     System.setProperty("SRVHENVENDELSESARKIV2_PASSWORD", properties.getProperty("SRVHENVENDELSESARKIV2_PASSWORD"))
     System.setProperty("SECURITY_TOKEN_SERVICE_JWKS_URL", properties.getProperty("SECURITY-TOKEN-SERVICE-JWKS_URL"))
     System.setProperty("SECURITY_TOKEN_SERVICE_ISSUER_URL", properties.getProperty("SECURITY-TOKEN-SERVICE-ISSUER_URL"))
-    System.setProperty("JWT_CLAIMS_AUDIENCE", "AUD")
 
     createHttpServer(7070, "TESTING")
 }

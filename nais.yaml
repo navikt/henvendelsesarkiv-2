@@ -37,8 +37,6 @@ fasitResources:
         resourceType: RestService
       - alias: security-token-service-issuer
         resourceType: BaseUrl
-      - alias: jwt.claims
-        resourceType: ApplicationProperties
     exposed:
       - alias: henvendelsesarkiv.arkivpost
         resourceType: RestService

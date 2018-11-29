@@ -21,20 +21,8 @@ class JwtConfig {
             .build()
 
     fun validate(credentials: JWTCredential): Principal? {
-        log.info("---------------------------")
-        log.info(credentials.payload.issuer)
-        log.info(credentials.payload.subject)
-        log.info(credentials.payload.id)
-        credentials.payload.audience.forEach { aud ->
-            log.info("Audience: $aud")
-        }
-        credentials.payload.claims.forEach { (k, v) ->
-            log.info( "Claim: ($k, ${v.asString()})" )
-        }
-        log.info("---------------------------")
         return try {
             requireNotNull(credentials.payload.audience) {"Audience not present"}
-            // require(credentials.payload.audience.contains(fasitProperties.jwtAudience)) {"Wrong audience in claims"}
             JWTPrincipal(credentials.payload)
         } catch (e: Exception) {
             log.error("Failed to validate token", e)
