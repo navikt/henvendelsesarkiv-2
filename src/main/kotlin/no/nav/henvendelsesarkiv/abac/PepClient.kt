@@ -36,6 +36,8 @@ class PepClient(private val bias: Decision) {
         log.info(xacmlJson)
         val result = khttp.post(url, headers = ABAC_PDP_HEADERS, data = xacmlJson)
         if (result.statusCode != 200) {
+            log.warn("ABAC user: ${fasitProperties.abacUser}")
+            log.warn("${fasitProperties.abacPass}".substring(0,1))
             throw RuntimeException("ABAC call failed with ${result.statusCode}: ${result.text}")
         }
         return XacmlResponseWrapper(result.text)
