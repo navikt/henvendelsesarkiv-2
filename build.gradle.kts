@@ -7,6 +7,7 @@ val kluentVersion = "1.42"
 val khttpVersion = "0.1.0"
 val ktorVersion = "1.0.0"
 val logbackVersion = "1.2.3"
+val logstashVersion = "5.1"
 val springJdbcVersion = "5.1.1.RELEASE"
 val hikariCpVersion = "3.2.0"
 val prometheusVersion = "0.4.0"
@@ -39,6 +40,7 @@ dependencies {
     compile("io.ktor:ktor-auth:$ktorVersion")
     compile("io.ktor:ktor-auth-jwt:$ktorVersion")
     compile("ch.qos.logback:logback-classic:$logbackVersion")
+    compile("net.logstash.logback:logstash-logback-encoder:$logstashVersion")
     compile("org.springframework:spring-jdbc:$springJdbcVersion")
     compile("com.zaxxer:HikariCP:$hikariCpVersion")
     compile("io.prometheus:simpleclient_hotspot:$prometheusVersion")
