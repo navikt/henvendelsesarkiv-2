@@ -10,6 +10,7 @@ val logbackVersion = "1.2.3"
 val springJdbcVersion = "5.1.1.RELEASE"
 val hikariCpVersion = "3.2.0"
 val prometheusVersion = "0.4.0"
+val navCommonLogVersion = "2018.11.28.20.34"
 val ojdbcVersion = "11.2.0.3"
 
 val mainClass = "no.nav.henvendelsesarkiv.ApplicationKt"
@@ -44,6 +45,7 @@ dependencies {
     compile("io.prometheus:simpleclient_hotspot:$prometheusVersion")
     compile("io.prometheus:simpleclient_common:$prometheusVersion")
     compile("khttp:khttp:$khttpVersion")
+    compile("no.nav.common:log:$navCommonLogVersion")
     runtime("com.oracle:ojdbc6:$ojdbcVersion")
 
     testCompile("org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion")
