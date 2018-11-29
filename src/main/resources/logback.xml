@@ -2,11 +2,11 @@
 <configuration>
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%green(%d{HH:mm:ss}) %cyan([%-5.5t]) %boldCyan(%0.-5p) %yellow(%-30.30logger{19}) %cyan(:) %m%n</pattern>
+            <pattern>%d{HH:mm:ss} [%-5.5t] %0.-5p %-30.30logger{19} : %m%n</pattern>
         </encoder>
     </appender>
 
-    <root level="TRACE">
+    <root level="INFO">
         <appender-ref ref="STDOUT"/>
     </root>
 </configuration>
