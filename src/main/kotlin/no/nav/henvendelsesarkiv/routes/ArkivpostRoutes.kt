@@ -4,6 +4,7 @@ import io.ktor.application.ApplicationCall
 import io.ktor.application.call
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.Parameters
+import io.ktor.request.header
 import io.ktor.request.receive
 import io.ktor.response.respond
 import io.ktor.routing.Route
@@ -14,33 +15,38 @@ import no.nav.henvendelsesarkiv.abac.PepClient
 import no.nav.henvendelsesarkiv.db.DatabaseService
 import no.nav.henvendelsesarkiv.db.lagDateTime
 import no.nav.henvendelsesarkiv.model.Arkivpost
-import org.slf4j.LoggerFactory
 
 fun Route.arkivpostRoutes(pepClient: PepClient) {
-    val log = LoggerFactory.getLogger("henvendelsesarkiv.ArkivpostRoutes")
-
 
     get("/arkivpost/{arkivpostId}") {
-        /*if (!pepClient.checkAccess(call.request.header("Authorization"), "read"))
-            call.respond(HttpStatusCode.Forbidden)*/
+        if (!pepClient.checkAccess(call.request.header("Authorization"), "read"))
+            call.respond(HttpStatusCode.Forbidden)
         hentArkivpost()
     }
 
     post("/arkivpost") {
+        if (!pepClient.checkAccess(call.request.header("Authorization"), "create"))
+            call.respond(HttpStatusCode.Forbidden)
         val arkivpost: Arkivpost = call.receive()
         val arkivpostId = DatabaseService().opprettHenvendelse(arkivpost)
         call.respond(arkivpostId)
     }
 
     get("/temagrupper/{aktørId}") {
+        if (!pepClient.checkAccess(call.request.header("Authorization"), "read"))
+            call.respond(HttpStatusCode.Forbidden)
         hentTemagrupper()
     }
 
     post("/arkivpost/{arkivpostId}/utgaar") {
+        if (!pepClient.checkAccess(call.request.header("Authorization"), "update"))
+            call.respond(HttpStatusCode.Forbidden)
         settUtgaarDato()
     }
 
     get("/arkivpost/aktoer/{aktørId}") {
+        if (!pepClient.checkAccess(call.request.header("Authorization"), "read"))
+            call.respond(HttpStatusCode.Forbidden)
         hentArkivpostForAktoer()
     }
 }
