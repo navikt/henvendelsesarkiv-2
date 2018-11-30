@@ -39,6 +39,7 @@ dependencies {
     compile("io.ktor:ktor-gson:$ktorVersion")
     compile("io.ktor:ktor-auth:$ktorVersion")
     compile("io.ktor:ktor-auth-jwt:$ktorVersion")
+    compile("io.ktor:ktor-client-auth-basic:$ktorVersion")
     compile("ch.qos.logback:logback-classic:$logbackVersion")
     compile("net.logstash.logback:logstash-logback-encoder:$logstashVersion")
     compile("org.springframework:spring-jdbc:$springJdbcVersion")
@@ -46,6 +47,7 @@ dependencies {
     compile("io.prometheus:simpleclient_hotspot:$prometheusVersion")
     compile("io.prometheus:simpleclient_common:$prometheusVersion")
     compile("khttp:khttp:$khttpVersion")
+    compile("io.ktor:ktor-client-apache:$ktorVersion")
     runtime("com.oracle:ojdbc6:$ojdbcVersion")
 
     testCompile("org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion")
