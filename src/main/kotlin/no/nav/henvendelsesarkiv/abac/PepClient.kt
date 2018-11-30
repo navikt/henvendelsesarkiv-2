@@ -11,7 +11,7 @@ private val gson = GsonBuilder().setPrettyPrinting().create()
 
 private val ABAC_PDP_HEADERS = mapOf(
         "Content-Type" to "application/xacml+json",
-        "Autorization" to "Basic " + Base64.getEncoder().encodeToString("${fasitProperties.abacUser}:${fasitProperties.abacPass}".toByteArray())
+        "Authorization" to "Basic " + Base64.getEncoder().encodeToString("${fasitProperties.abacUser}:${fasitProperties.abacPass}".toByteArray())
 )
 
 private const val PEP_ID = "henvendelsesarkiv"
