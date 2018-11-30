@@ -4,10 +4,15 @@ import io.ktor.application.install
 import io.ktor.auth.Authentication
 import io.ktor.auth.authenticate
 import io.ktor.auth.jwt.jwt
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.apache.Apache
+import io.ktor.client.features.auth.basic.BasicAuth
+import io.ktor.client.utils.buildHeaders
 import io.ktor.features.CallLogging
 import io.ktor.features.ContentNegotiation
 import io.ktor.gson.gson
 import io.ktor.http.ContentType
+import io.ktor.http.headersOf
 import io.ktor.routing.accept
 import io.ktor.routing.routing
 import io.ktor.server.engine.ApplicationEngine
@@ -25,6 +30,8 @@ import org.slf4j.event.Level
 import java.time.LocalDateTime
 
 private const val REALM = "Henvendelsesarkiv JWT Realm"
+
+private val pepClient = PepClient(bias = Decision.Deny, httpClient = createAbacHttpClient())
 
 fun createHttpServer(port: Int = 7070, applicationVersion: String, wait: Boolean = true): ApplicationEngine = embeddedServer(Netty, port) {
     install(Authentication) {
@@ -56,13 +63,25 @@ fun createHttpServer(port: Int = 7070, applicationVersion: String, wait: Boolean
 
         authenticate {
             accept(ContentType.Application.Json) {
-                arkivpostReadRoutes(PepClient(Decision.Deny))
+                arkivpostReadRoutes(pepClient)
             }
 
             accept(ContentType.Application.FormUrlEncoded) {
-                arkivpostWriteRoutes(PepClient(Decision.Deny))
+                arkivpostWriteRoutes(pepClient)
             }
         }
 
     }
 }.start(wait = wait)
+
+private fun createAbacHttpClient(): HttpClient {
+    return HttpClient(Apache) {
+        install(BasicAuth) {
+            username = fasitProperties.abacUser
+            password = fasitProperties.abacPass
+        }
+        buildHeaders {
+            headersOf("Content-Type", "application/xacml+json")
+        }
+    }
+}

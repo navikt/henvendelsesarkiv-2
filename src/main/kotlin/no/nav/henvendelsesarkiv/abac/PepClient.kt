@@ -1,28 +1,27 @@
 package no.nav.henvendelsesarkiv.abac
 
 import com.google.gson.GsonBuilder
+import io.ktor.client.HttpClient
+import io.ktor.client.request.post
+import io.ktor.client.response.HttpResponse
+import io.ktor.client.response.readText
+import kotlinx.coroutines.runBlocking
 import no.nav.henvendelsesarkiv.fasitProperties
 import org.slf4j.LoggerFactory
-import java.util.*
 
 private val log = LoggerFactory.getLogger("henvendelsesarkiv.PepClient")
 private val url = fasitProperties.abacEndpoint
 private val gson = GsonBuilder().setPrettyPrinting().create()
 
-private val ABAC_PDP_HEADERS = mapOf(
-        "Content-Type" to "application/xacml+json",
-        "Authorization" to "Basic " + Base64.getEncoder().encodeToString("${fasitProperties.abacUser}:${fasitProperties.abacPass}".toByteArray())
-)
-
 private const val PEP_ID = "henvendelsesarkiv"
 private const val DOMENE = "brukerdialog"
 
-class PepClient(private val bias: Decision) {
+class PepClient(private val bias: Decision, private val httpClient: HttpClient) {
 
     fun checkAccess(bearerToken: String?, action: String): Boolean {
-        requireNotNull(bearerToken) {"Authorization token not set"}
+        requireNotNull(bearerToken) { "Authorization token not set" }
         val token = bearerToken.substringAfter(" ")
-        return hasAccessToResource(extractBodyFromOidcToken(token),  action)
+        return hasAccessToResource(extractBodyFromOidcToken(token), action)
     }
 
     private fun hasAccessToResource(oidcTokenBody: String, action: String): Boolean {
@@ -34,11 +33,18 @@ class PepClient(private val bias: Decision) {
     private fun evaluate(xacmlRequestBuilder: XacmlRequestBuilder): XacmlResponseWrapper {
         val xacmlJson = gson.toJson(xacmlRequestBuilder.build())
         log.info(xacmlJson)
-        val result = khttp.post(url, headers = ABAC_PDP_HEADERS, data = xacmlJson)
-        if (result.statusCode != 200) {
-            throw RuntimeException("ABAC call failed with ${result.statusCode}: ${result.text}")
+
+        return runBlocking {
+            val result = httpClient.post<HttpResponse>(url) {
+                body = xacmlJson
+            }
+            if (result.status.value != 200) {
+                throw RuntimeException("ABAC call failed with ${result.status.value}")
+            }
+            val res = result.readText()
+            log.info(res)
+            XacmlResponseWrapper(res)
         }
-        return XacmlResponseWrapper(result.text)
     }
 
     private fun createRequestWithDefaultHeaders(oidcTokenBody: String, action: String): XacmlRequestBuilder {
@@ -50,7 +56,7 @@ class PepClient(private val bias: Decision) {
     }
 
     private fun createBiasedDecision(decision: Decision): Decision {
-        return when(decision) {
+        return when (decision) {
             Decision.NotApplicable, Decision.Indeterminate -> bias
             else -> decision
         }
