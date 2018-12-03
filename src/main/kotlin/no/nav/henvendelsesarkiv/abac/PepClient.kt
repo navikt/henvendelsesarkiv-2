@@ -6,6 +6,8 @@ import io.ktor.client.request.header
 import io.ktor.client.request.post
 import io.ktor.client.response.HttpResponse
 import io.ktor.client.response.readText
+import io.ktor.content.TextContent
+import io.ktor.http.ContentType
 import kotlinx.coroutines.runBlocking
 import no.nav.henvendelsesarkiv.fasitProperties
 import org.slf4j.LoggerFactory
@@ -36,9 +38,9 @@ class PepClient(private val bias: Decision, private val httpClient: HttpClient) 
         log.info(xacmlJson)
 
         return runBlocking {
+            val xacmlContentType = ContentType("application/xacml+json","", ArrayList())
             val result = httpClient.post<HttpResponse>(url) {
-                body = xacmlJson
-                header("Content-Type", "application/xacml+json")
+                body = TextContent(xacmlJson, xacmlContentType)
             }
             val resultText = result.readText()
             if (result.status.value != 200) {
