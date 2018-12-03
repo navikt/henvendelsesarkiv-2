@@ -2,6 +2,7 @@ package no.nav.henvendelsesarkiv.abac
 
 import com.google.gson.GsonBuilder
 import io.ktor.client.HttpClient
+import io.ktor.client.request.header
 import io.ktor.client.request.post
 import io.ktor.client.response.HttpResponse
 import io.ktor.client.response.readText
@@ -37,13 +38,16 @@ class PepClient(private val bias: Decision, private val httpClient: HttpClient) 
         return runBlocking {
             val result = httpClient.post<HttpResponse>(url) {
                 body = xacmlJson
+                header("Content-Type", "application/xacml+json")
             }
+            val resultText = result.readText()
             if (result.status.value != 200) {
-                throw RuntimeException("ABAC call failed with ${result.status.value}")
+                throw RuntimeException(
+                        "ABAC call failed with statuscode: ${result.status.value}, resultText: $resultText"
+                )
             }
-            val res = result.readText()
-            log.info(res)
-            XacmlResponseWrapper(res)
+            log.info(resultText)
+            XacmlResponseWrapper(resultText)
         }
     }
 
