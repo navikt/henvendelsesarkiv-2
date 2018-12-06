@@ -9,10 +9,9 @@ import io.ktor.client.engine.apache.Apache
 import io.ktor.client.features.auth.basic.BasicAuth
 import io.ktor.features.CallLogging
 import io.ktor.features.ContentNegotiation
+import io.ktor.features.StatusPages
 import io.ktor.gson.gson
-import io.ktor.http.ContentType
 import io.ktor.request.path
-import io.ktor.routing.accept
 import io.ktor.routing.routing
 import io.ktor.server.engine.ApplicationEngine
 import io.ktor.server.engine.embeddedServer
@@ -33,6 +32,11 @@ private const val REALM = "Henvendelsesarkiv JWT Realm"
 private val pepClient = PepClient(bias = Decision.Deny, httpClient = createAbacHttpClient())
 
 fun createHttpServer(applicationState: ApplicationState, port: Int = 7070): ApplicationEngine = embeddedServer(Netty, port) {
+    install(StatusPages) {
+        notFoundHandler()
+        exceptionHandler()
+    }
+
     install(Authentication) {
         jwt {
             val jwtConfig = JwtConfig()
@@ -63,13 +67,13 @@ fun createHttpServer(applicationState: ApplicationState, port: Int = 7070): Appl
         naisRoutes(readinessCheck = { applicationState.initialized }, livenessCheck = { applicationState.running })
 
         authenticate {
-            accept(ContentType.Application.Json) {
-                arkivpostReadRoutes(pepClient)
-            }
+            //accept(ContentType.Application.Json) {
+            arkivpostReadRoutes(pepClient)
+            //}
 
-            accept(ContentType.Application.FormUrlEncoded) {
-                arkivpostWriteRoutes(pepClient)
-            }
+            //accept(ContentType.Application.FormUrlEncoded) {
+            arkivpostWriteRoutes(pepClient)
+            //}
         }
     }
     applicationState.initialized = true
