@@ -50,9 +50,14 @@ fun Route.arkivpostReadRoutes(pepClient: PepClient) {
 
 fun Route.arkivpostWriteRoutes(pepClient: PepClient) {
     post("/arkivpost/{arkivpostId}/utgaar") {
+        log.info("Kall mot utgaar dato")
         if (!pepClient.checkAccess(call.request.header("Authorization"), "update"))
             call.respond(HttpStatusCode.Forbidden)
-        settUtgaarDato()
+        try {
+            settUtgaarDato()
+        } catch(e: Throwable) {
+            log.error("Feil i utgår dato", e)
+        }
     }
 }
 
@@ -91,12 +96,13 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.settUtgaarDato() {
         try {
             DatabaseService().settUtgaarDato(arkivpostId, utgaarDato)
             call.respond(HttpStatusCode.OK)
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             log.error("Feil i setting av dato", e)
             call.respond(HttpStatusCode.InternalServerError)
         }
     }
     //TODO: Burde det kastes 500-feil om den kommer hit? Gjelder kanskje flere tjenestekall?
+    log.info("Kom vi hit?")
 }
 
 private suspend fun PipelineContext<Unit, ApplicationCall>.hentArkivpostForAktoer() {
