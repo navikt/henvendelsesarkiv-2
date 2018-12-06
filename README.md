@@ -23,7 +23,7 @@ systemProp.https.nonProxyHosts=localhost|127.0.0.1|*.local|*.adeo.no|*.nav.no|*.
 * Kryss fingrene, deretter: Tut og kjør!
 
 # Teste lokalt
-Fyll ut de manglende feltene i StartKtorLocal.kt, ved å legge inn verdier i `user.home/localstart.properties` og kjør
+Fyll ut de manglende feltene i StartKtorLocal.kt, ved å legge inn verdier i `user.home/localstart.properties` og kjør.
 
 ## Henvendelser
 
