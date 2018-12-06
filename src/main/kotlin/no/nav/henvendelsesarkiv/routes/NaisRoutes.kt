@@ -2,24 +2,32 @@ package no.nav.henvendelsesarkiv.routes
 
 import io.ktor.application.call
 import io.ktor.http.ContentType
-import io.ktor.response.respond
+import io.ktor.http.HttpStatusCode
+import io.ktor.response.respondText
 import io.ktor.response.respondTextWriter
 import io.ktor.routing.Routing
 import io.ktor.routing.get
 import io.prometheus.client.CollectorRegistry
 import io.prometheus.client.exporter.common.TextFormat
 
-data class SelftestStatus(val status: String, val applicationVersion: String)
-
-fun Routing.naisRoutes(applicationVersion: String,
+fun Routing.naisRoutes(readinessCheck: () -> Boolean,
+                       livenessCheck: () -> Boolean = { true },
                        collectorRegistry: CollectorRegistry = CollectorRegistry.defaultRegistry) {
 
     get("/isAlive") {
-        call.respond(SelftestStatus(status = "I'm alive", applicationVersion = applicationVersion))
+        if (livenessCheck()) {
+            call.respondText("Alive")
+        } else {
+            call.respondText("Not alive", status = HttpStatusCode.InternalServerError)
+        }
     }
 
     get("/isReady") {
-        call.respond(SelftestStatus(status = "I'm ready", applicationVersion = applicationVersion))
+        if (readinessCheck()) {
+            call.respondText("Ready")
+        } else {
+            call.respondText("Not ready", status = HttpStatusCode.InternalServerError)
+        }
     }
 
     get("/prometheus") {
