@@ -34,14 +34,6 @@ fun Route.arkivpostReadRoutes(pepClient: PepClient) {
             call.respond(HttpStatusCode.Forbidden)
         hentArkivpostForAktoer()
     }
-}
-
-fun Route.arkivpostWriteRoutes(pepClient: PepClient) {
-    post("/arkivpost/{arkivpostId}/utgaar") {
-        if (!pepClient.checkAccess(call.request.header("Authorization"), "update"))
-            call.respond(HttpStatusCode.Forbidden)
-        settUtgaarDato()
-    }
 
     post("/arkivpost") {
         if (!pepClient.checkAccess(call.request.header("Authorization"), "create"))
@@ -49,6 +41,14 @@ fun Route.arkivpostWriteRoutes(pepClient: PepClient) {
         val arkivpost: Arkivpost = call.receive()
         val arkivpostId = DatabaseService().opprettHenvendelse(arkivpost)
         call.respond(arkivpostId)
+    }
+}
+
+fun Route.arkivpostWriteRoutes(pepClient: PepClient) {
+    post("/arkivpost/{arkivpostId}/utgaar") {
+        if (!pepClient.checkAccess(call.request.header("Authorization"), "update"))
+            call.respond(HttpStatusCode.Forbidden)
+        settUtgaarDato()
     }
 }
 

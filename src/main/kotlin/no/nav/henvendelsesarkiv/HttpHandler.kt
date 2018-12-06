@@ -7,12 +7,11 @@ import io.ktor.auth.jwt.jwt
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.apache.Apache
 import io.ktor.client.features.auth.basic.BasicAuth
-import io.ktor.client.utils.buildHeaders
 import io.ktor.features.CallLogging
 import io.ktor.features.ContentNegotiation
 import io.ktor.gson.gson
 import io.ktor.http.ContentType
-import io.ktor.http.headersOf
+import io.ktor.request.path
 import io.ktor.routing.accept
 import io.ktor.routing.routing
 import io.ktor.server.engine.ApplicationEngine
@@ -56,6 +55,8 @@ fun createHttpServer(applicationState: ApplicationState, port: Int = 7070): Appl
 
     install(CallLogging) {
         level = Level.INFO
+        filter { call -> call.request.path().startsWith("/arkivpost") }
+        filter { call -> call.request.path().startsWith("/temagrupper") }
     }
 
     routing {
