@@ -17,7 +17,7 @@ fun main(args: Array<String>) {
         log.info("Shutdown hook called, shutting down gracefully")
         applicationState.initialized = false
         applicationState.running = false
-        applicationServer.stop(1, 5, TimeUnit.SECONDS)
+        applicationServer.stop(5, 5, TimeUnit.SECONDS)
     })
 
     applicationServer.start(wait = true)

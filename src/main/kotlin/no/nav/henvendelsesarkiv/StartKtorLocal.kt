@@ -1,7 +1,11 @@
 package no.nav.henvendelsesarkiv
 
+import org.slf4j.LoggerFactory
 import java.io.FileInputStream
 import java.util.*
+import java.util.concurrent.TimeUnit
+
+private val log = LoggerFactory.getLogger("henvendelsesarkiv.Application")
 
 fun main(args: Array<String>) {
     val properties = Properties()
@@ -18,5 +22,15 @@ fun main(args: Array<String>) {
     System.setProperty("SECURITY_TOKEN_SERVICE_JWKS_URL", properties.getProperty("SECURITY-TOKEN-SERVICE-JWKS_URL"))
     System.setProperty("SECURITY_TOKEN_SERVICE_ISSUER_URL", properties.getProperty("SECURITY-TOKEN-SERVICE-ISSUER_URL"))
 
-    createHttpServer(ApplicationState(), 7070).start(wait = true)
+    val applicationState = ApplicationState()
+    val applicationServer = createHttpServer(applicationState, 7070)
+
+    Runtime.getRuntime().addShutdownHook(Thread {
+        log.info("Shutdown hook called, shutting down gracefully")
+        applicationState.initialized = false
+        applicationState.running = false
+        applicationServer.stop(1, 1, TimeUnit.SECONDS)
+    })
+
+    applicationServer.start(wait = true)
 }
