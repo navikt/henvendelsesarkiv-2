@@ -59,7 +59,6 @@ fun createHttpServer(applicationState: ApplicationState, port: Int = 7070): Appl
     }
 
     routing {
-        //
         naisRoutes(readinessCheck = { applicationState.initialized }, livenessCheck = { applicationState.running })
 
         authenticate {
