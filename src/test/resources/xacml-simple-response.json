@@ -1,5 +1,5 @@
 {
-  "Response": [
+  "Response":
     {
       "Decision": "Deny",
       "Status": {
@@ -8,5 +8,4 @@
         }
       }
     }
-  ]
 }
