@@ -2,12 +2,11 @@ package no.nav.henvendelsesarkiv.abac
 
 import com.google.gson.GsonBuilder
 import io.ktor.client.HttpClient
-import io.ktor.client.request.header
 import io.ktor.client.request.post
 import io.ktor.client.response.HttpResponse
 import io.ktor.client.response.readText
-import io.ktor.content.TextContent
 import io.ktor.http.ContentType
+import io.ktor.http.content.TextContent
 import kotlinx.coroutines.runBlocking
 import no.nav.henvendelsesarkiv.fasitProperties
 import org.slf4j.LoggerFactory
@@ -16,6 +15,7 @@ private val log = LoggerFactory.getLogger("henvendelsesarkiv.PepClient")
 private val url = fasitProperties.abacEndpoint
 private val gson = GsonBuilder().setPrettyPrinting().create()
 
+private const val XACML_CONTENT_TYPE = "application/xacml+json"
 private const val PEP_ID = "henvendelsesarkiv"
 private const val DOMENE = "brukerdialog"
 
@@ -38,18 +38,15 @@ class PepClient(private val bias: Decision, private val httpClient: HttpClient) 
         log.info(xacmlJson)
 
         return runBlocking {
-            val xacmlContentType = ContentType("application/xacml+json","", ArrayList())
             val result = httpClient.post<HttpResponse>(url) {
-                body = TextContent(xacmlJson, xacmlContentType)
+                body = TextContent(xacmlJson, ContentType.parse(XACML_CONTENT_TYPE))
             }
-            val resultText = result.readText()
             if (result.status.value != 200) {
-                throw RuntimeException(
-                        "ABAC call failed with statuscode: ${result.status.value}, resultText: $resultText"
-                )
+                throw RuntimeException("ABAC call failed with ${result.status.value}")
             }
-            log.info(resultText)
-            XacmlResponseWrapper(resultText)
+            val res = result.readText()
+            log.info(res)
+            XacmlResponseWrapper(res)
         }
     }
 

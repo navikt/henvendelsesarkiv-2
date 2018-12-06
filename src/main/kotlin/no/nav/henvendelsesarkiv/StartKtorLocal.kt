@@ -18,5 +18,5 @@ fun main(args: Array<String>) {
     System.setProperty("SECURITY_TOKEN_SERVICE_JWKS_URL", properties.getProperty("SECURITY-TOKEN-SERVICE-JWKS_URL"))
     System.setProperty("SECURITY_TOKEN_SERVICE_ISSUER_URL", properties.getProperty("SECURITY-TOKEN-SERVICE-ISSUER_URL"))
 
-    createHttpServer(7070, "TESTING")
+    createHttpServer(ApplicationState(), 7070).start(wait = true)
 }

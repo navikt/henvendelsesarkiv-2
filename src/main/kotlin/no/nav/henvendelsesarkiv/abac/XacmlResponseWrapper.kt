@@ -2,6 +2,7 @@ package no.nav.henvendelsesarkiv.abac
 
 import com.google.gson.GsonBuilder
 import com.google.gson.annotations.SerializedName
+import java.lang.RuntimeException
 
 private val gson = GsonBuilder().create()
 
@@ -13,7 +14,7 @@ enum class Decision {
 }
 
 private data class AbacResponse (
-        @SerializedName("Response") val response: List<Result>
+        @SerializedName("Response") val response: Result
 )
 
 private data class Result(
@@ -59,12 +60,8 @@ class XacmlResponseWrapper(xacmlResponse: String) {
     private var result: Result
 
     init {
-        val results: AbacResponse = gson.fromJson(xacmlResponse, AbacResponse::class.java)
-        if(results.response.isNotEmpty()) {
-            result = results.response[0]
-        } else {
-            throw RuntimeException("Empty response")
-        }
+        val responseResult: AbacResponse = gson.fromJson(xacmlResponse, AbacResponse::class.java)
+        result = responseResult.response
     }
 
     fun getDecision(): Decision = result.decision

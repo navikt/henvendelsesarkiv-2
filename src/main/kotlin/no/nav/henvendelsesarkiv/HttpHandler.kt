@@ -33,7 +33,7 @@ private const val REALM = "Henvendelsesarkiv JWT Realm"
 
 private val pepClient = PepClient(bias = Decision.Deny, httpClient = createAbacHttpClient())
 
-fun createHttpServer(port: Int = 7070, applicationVersion: String, wait: Boolean = true): ApplicationEngine = embeddedServer(Netty, port) {
+fun createHttpServer(applicationState: ApplicationState, port: Int = 7070): ApplicationEngine = embeddedServer(Netty, port) {
     install(Authentication) {
         jwt {
             val jwtConfig = JwtConfig()
@@ -59,7 +59,7 @@ fun createHttpServer(port: Int = 7070, applicationVersion: String, wait: Boolean
     }
 
     routing {
-        naisRoutes(applicationVersion)
+        naisRoutes(readinessCheck = { applicationState.initialized }, livenessCheck = { applicationState.running })
 
         authenticate {
             accept(ContentType.Application.Json) {
@@ -70,18 +70,15 @@ fun createHttpServer(port: Int = 7070, applicationVersion: String, wait: Boolean
                 arkivpostWriteRoutes(pepClient)
             }
         }
-
     }
-}.start(wait = wait)
+    applicationState.initialized = true
+}
 
 private fun createAbacHttpClient(): HttpClient {
     return HttpClient(Apache) {
         install(BasicAuth) {
             username = fasitProperties.abacUser
             password = fasitProperties.abacPass
-        }
-        buildHeaders {
-            headersOf("Content-Type", "application/xacml+json")
         }
     }
 }
