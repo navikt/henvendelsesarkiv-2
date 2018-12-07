@@ -2,7 +2,6 @@ package no.nav.henvendelsesarkiv.abac
 
 import com.google.gson.GsonBuilder
 import com.google.gson.annotations.SerializedName
-import java.lang.RuntimeException
 
 private val gson = GsonBuilder().create()
 
@@ -13,15 +12,15 @@ enum class Decision {
     Indeterminate;
 }
 
-private data class AbacResponse (
+private data class AbacResponse(
         @SerializedName("Response") val response: Result
 )
 
 private data class Result(
         @SerializedName("Decision") val decision: Decision,
         @SerializedName("Status") val status: Status?,
-        @SerializedName("Obligations") val obligations: List<ObligationOrAdvice>?,
-        @SerializedName("AssociatedAdvice") val associatedAdvice: List<ObligationOrAdvice>?,
+        @SerializedName("Obligations") val obligations: ObligationOrAdvice?,
+        @SerializedName("AssociatedAdvice") val associatedAdvice: ObligationOrAdvice?,
         @SerializedName("PolicyIdentifierList") val policyIdentifierList: PolicyIdentifier?
 )
 
@@ -68,11 +67,11 @@ class XacmlResponseWrapper(xacmlResponse: String) {
 
     fun getStatusLogLine(): String = "ABAC ansvered with status ${result.status?.statusCode?.value}"
 
-    fun getNumberOfObligations(): Int = result.obligations?.size ?: 0
+    fun getNumberOfObligations(): Int = if (result.obligations != null) 1 else 0
 
-    fun getOblogationsLogLine(): String = "ABAC answered with ${result.obligations?.size} obligations"
+    fun getOblogationsLogLine(): String = "ABAC answered with ${getNumberOfObligations()} obligations"
 
-    fun getNumberOfAdvice(): Int = result.associatedAdvice?.size ?: 0
+    fun getNumberOfAdvice(): Int = if (result.associatedAdvice != null) 1 else 0
 
-    fun getAdviceLogLine(): String = "ABAC answered with ${result.associatedAdvice?.size} advice"
+    fun getAdviceLogLine(): String = "ABAC answered with ${getNumberOfAdvice()} advice"
 }

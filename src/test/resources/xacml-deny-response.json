@@ -1,0 +1,32 @@
+{
+  "Response" : {
+    "Decision" : "Deny",
+    "Status" : {
+      "StatusCode" : {
+        "Value" : "urn:oasis:names:tc:xacml:1.0:status:ok",
+        "StatusCode" : {
+          "Value" : "urn:oasis:names:tc:xacml:1.0:status:ok"
+        }
+      }
+    },
+    "AssociatedAdvice" : {
+      "Id" : "no.nav.abac.advices.info.deny_info",
+      "AttributeAssignment" : [ {
+        "AttributeId" : "no.nav.abac.attributter.adviceorobligation.fritekst",
+        "Value" : "teknisk har ikke tilgang",
+        "Category" : "urn:oasis:names:tc:xacml:1.0:subject-category:access-subject",
+        "DataType" : "http://www.w3.org/2001/XMLSchema#string"
+      }, {
+        "AttributeId" : "no.nav.abac.attributter.adviceorobligation.deny_policy",
+        "Value" : "brukerdialog_deny_intern",
+        "Category" : "urn:oasis:names:tc:xacml:3.0:attribute-category:environment",
+        "DataType" : "http://www.w3.org/2001/XMLSchema#string"
+      }, {
+        "AttributeId" : "no.nav.abac.attributter.adviceorobligation.deny_rule",
+        "Value" : "deny_all",
+        "Category" : "urn:oasis:names:tc:xacml:3.0:attribute-category:environment",
+        "DataType" : "http://www.w3.org/2001/XMLSchema#string"
+      } ]
+    }
+  }
+}

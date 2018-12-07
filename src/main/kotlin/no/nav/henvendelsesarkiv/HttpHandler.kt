@@ -21,8 +21,7 @@ import no.nav.henvendelsesarkiv.abac.PepClient
 import no.nav.henvendelsesarkiv.db.localDateTimeDeserializer
 import no.nav.henvendelsesarkiv.db.localDateTimeSerializer
 import no.nav.henvendelsesarkiv.jwt.JwtConfig
-import no.nav.henvendelsesarkiv.routes.arkivpostReadRoutes
-import no.nav.henvendelsesarkiv.routes.arkivpostWriteRoutes
+import no.nav.henvendelsesarkiv.routes.arkivpostRoutes
 import no.nav.henvendelsesarkiv.routes.naisRoutes
 import org.slf4j.event.Level
 import java.time.LocalDateTime
@@ -67,13 +66,7 @@ fun createHttpServer(applicationState: ApplicationState, port: Int = 7070): Appl
         naisRoutes(readinessCheck = { applicationState.initialized }, livenessCheck = { applicationState.running })
 
         authenticate {
-            //accept(ContentType.Application.Json) {
-            arkivpostReadRoutes(pepClient)
-            //}
-
-            //accept(ContentType.Application.FormUrlEncoded) {
-            arkivpostWriteRoutes(pepClient)
-            //}
+            arkivpostRoutes(pepClient)
         }
     }
     applicationState.initialized = true

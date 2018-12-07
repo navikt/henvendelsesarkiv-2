@@ -19,17 +19,18 @@ object XacmlResponseWrapperSpec : Spek({
                 }
             }
 
-            on("Multiple advice") {
-                val wrapper = XacmlResponseWrapper(getResponse("xacml-response-multiple-advice.json"))
+            on("Response") {
+                val wrapper = XacmlResponseWrapper(getResponse("xacml-deny-response.json"))
                 it("should have descision deny") {
                     wrapper.getDecision() `should equal` Decision.Deny
                 }
             }
+
         }
 
     }
 })
 
 private fun getResponse(fileName: String): String {
-    return getFileAsString("src/test/resources/${fileName}")
+    return getFileAsString("src/test/resources/$fileName")
 }

@@ -16,11 +16,10 @@ import no.nav.henvendelsesarkiv.db.DatabaseService
 import no.nav.henvendelsesarkiv.db.lagDateTime
 import no.nav.henvendelsesarkiv.model.Arkivpost
 import org.slf4j.LoggerFactory
-import java.lang.Exception
 
 private val log = LoggerFactory.getLogger("henvendelsesarkiv.ArkivpostRoutes")
 
-fun Route.arkivpostReadRoutes(pepClient: PepClient) {
+fun Route.arkivpostRoutes(pepClient: PepClient) {
     get("/arkivpost/{arkivpostId}") {
         if (!pepClient.checkAccess(call.request.header("Authorization"), "read"))
             call.respond(HttpStatusCode.Forbidden)
@@ -46,16 +45,14 @@ fun Route.arkivpostReadRoutes(pepClient: PepClient) {
         val arkivpostId = DatabaseService().opprettHenvendelse(arkivpost)
         call.respond(arkivpostId)
     }
-}
 
-fun Route.arkivpostWriteRoutes(pepClient: PepClient) {
     post("/arkivpost/{arkivpostId}/utgaar") {
         log.info("Kall mot utgaar dato")
         if (!pepClient.checkAccess(call.request.header("Authorization"), "update"))
             call.respond(HttpStatusCode.Forbidden)
         try {
             settUtgaarDato()
-        } catch(e: Throwable) {
+        } catch (e: Throwable) {
             log.error("Feil i utgår dato", e)
         }
     }
@@ -87,22 +84,14 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.hentTemagrupper() {
 private suspend fun PipelineContext<Unit, ApplicationCall>.settUtgaarDato() {
     val arkivpostId = call.parameters["arkivpostId"]?.toLong()
     val post = call.receive<Parameters>()
-    val datoStr = post["utgaarDato"]
-    log.info("Prøver å sette dato $datoStr.")
-    val utgaarDato = datoStr?.let(::lagDateTime)
+    val utgaarDato = post["utgaarDato"]?.let(::lagDateTime)
     if (arkivpostId == null || utgaarDato == null) {
         call.respond(HttpStatusCode.BadRequest)
     } else {
-        try {
-            DatabaseService().settUtgaarDato(arkivpostId, utgaarDato)
-            call.respond(HttpStatusCode.OK)
-        } catch (e: Throwable) {
-            log.error("Feil i setting av dato", e)
-            call.respond(HttpStatusCode.InternalServerError)
-        }
+        DatabaseService().settUtgaarDato(arkivpostId, utgaarDato)
+        call.respond(HttpStatusCode.OK)
     }
     //TODO: Burde det kastes 500-feil om den kommer hit? Gjelder kanskje flere tjenestekall?
-    log.info("Kom vi hit?")
 }
 
 private suspend fun PipelineContext<Unit, ApplicationCall>.hentArkivpostForAktoer() {
