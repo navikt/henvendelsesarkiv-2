@@ -44,11 +44,8 @@ class DatabaseService constructor(private val jt: JdbcTemplate = hikariJdbcTempl
     }
 
     fun opprettHenvendelse(arkivpost: Arkivpost): Long {
-        log.info("#### DB start ####")
         arkivpost.arkivpostId = nextSequenceValue()
-        log.info("#### next value: " + arkivpost.arkivpostId +  "####")
         insertIntoDb(arkivpost)
-        log.info("#### DB end ####")
 
         arkivpost.vedleggListe.forEach{ opprettVedlegg(arkivpost.arkivpostId!!, it) }
         return arkivpost.arkivpostId!!

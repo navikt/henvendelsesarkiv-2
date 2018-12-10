@@ -29,7 +29,6 @@ class PepClient(private val bias: Decision, private val httpClient: HttpClient) 
 
     private fun hasAccessToResource(oidcTokenBody: String, action: String): Boolean {
         val response = evaluate(createRequestWithDefaultHeaders(oidcTokenBody, action))
-        logAnswer(response)
         return createBiasedDecision(response.getDecision()) == Decision.Permit
     }
 
@@ -65,11 +64,6 @@ class PepClient(private val bias: Decision, private val httpClient: HttpClient) 
         }
     }
 
-    private fun logAnswer(response: XacmlResponseWrapper) {
-        log.debug(response.getStatusLogLine())
-        if (response.getNumberOfObligations() > 0) log.info(response.getOblogationsLogLine())
-        if (response.getNumberOfAdvice() > 0) log.info(response.getAdviceLogLine())
-    }
 
     private fun extractBodyFromOidcToken(token: String): String {
         return token.substringAfter(".").substringBefore(".")
