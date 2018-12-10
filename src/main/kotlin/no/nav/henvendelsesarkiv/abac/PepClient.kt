@@ -34,7 +34,6 @@ class PepClient(private val bias: Decision, private val httpClient: HttpClient) 
 
     private fun evaluate(xacmlRequestBuilder: XacmlRequestBuilder): XacmlResponseWrapper {
         val xacmlJson = gson.toJson(xacmlRequestBuilder.build())
-        log.info(xacmlJson)
 
         return runBlocking {
             val result = httpClient.post<HttpResponse>(url) {
@@ -44,7 +43,6 @@ class PepClient(private val bias: Decision, private val httpClient: HttpClient) 
                 throw RuntimeException("ABAC call failed with ${result.status.value}")
             }
             val res = result.readText()
-            log.info(res)
             XacmlResponseWrapper(res)
         }
     }
