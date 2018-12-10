@@ -47,7 +47,6 @@ fun Route.arkivpostRoutes(pepClient: PepClient) {
     }
 
     post("/arkivpost/{arkivpostId}/utgaar") {
-        log.info("Kall mot utgaar dato")
         if (!pepClient.checkAccess(call.request.header("Authorization"), "update"))
             call.respond(HttpStatusCode.Forbidden)
         try {
