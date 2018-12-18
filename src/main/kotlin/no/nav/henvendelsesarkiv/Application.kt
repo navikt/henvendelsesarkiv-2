@@ -16,7 +16,6 @@ fun main(args: Array<String>) {
     Runtime.getRuntime().addShutdownHook(Thread {
         log.info("Shutdown hook called, shutting down gracefully")
         applicationState.initialized = false
-        applicationState.running = false
         applicationServer.stop(5, 5, TimeUnit.SECONDS)
     })
 

@@ -1,6 +1,6 @@
 name: henvendelsesarkiv2
 image: navikt/henvendelsesarkiv
-team: oppfolging
+team: oppfolgingperson
 replicas:
     min: 2
     max: 2
