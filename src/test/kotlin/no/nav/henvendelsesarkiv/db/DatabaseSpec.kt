@@ -3,6 +3,7 @@ package no.nav.henvendelsesarkiv.db
 import no.nav.henvendelsesarkiv.model.ArkivStatusType
 import no.nav.henvendelsesarkiv.model.Arkivpost
 import no.nav.henvendelsesarkiv.model.Vedlegg
+import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should equal`
 import org.amshove.kluent.`should not be`
 import org.jetbrains.spek.api.Spek
@@ -31,6 +32,13 @@ object DatabaseSpec : Spek({
         }
 
         given("DatabaseService exists") {
+            on ("sjekk database") {
+                it("should give ok") {
+                    db.opprettHenvendelse(lagTomArkivpost())
+                    val melding = db.sjekkDatabase()
+                    melding `should be equal to` "OK"
+                }
+            }
             on("insert arkivpost without vedlegg") {
                 db.opprettHenvendelse(lagTomArkivpost())
 

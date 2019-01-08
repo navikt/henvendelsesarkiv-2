@@ -9,6 +9,7 @@ import io.ktor.routing.Routing
 import io.ktor.routing.get
 import io.prometheus.client.CollectorRegistry
 import io.prometheus.client.exporter.common.TextFormat
+import no.nav.henvendelsesarkiv.db.DatabaseService
 
 fun Routing.naisRoutes(readinessCheck: () -> Boolean,
                        livenessCheck: () -> Boolean = { true },
@@ -35,6 +36,10 @@ fun Routing.naisRoutes(readinessCheck: () -> Boolean,
         call.respondTextWriter(ContentType.parse(TextFormat.CONTENT_TYPE_004)) {
             TextFormat.write004(this, collectorRegistry.filteredMetricFamilySamples(names))
         }
+    }
+
+    get("/internal/selftest") {
+        call.respondText(DatabaseService().sjekkDatabase())
     }
 
 }

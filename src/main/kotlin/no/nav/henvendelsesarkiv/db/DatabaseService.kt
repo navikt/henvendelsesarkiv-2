@@ -6,6 +6,7 @@ import org.springframework.jdbc.core.PreparedStatementSetter
 import java.sql.Timestamp
 import java.time.LocalDateTime
 import no.nav.henvendelsesarkiv.model.Arkivpost
+import org.slf4j.LoggerFactory
 import java.util.*
 
 
@@ -28,7 +29,19 @@ private const val VEDLEGG_SQL = """
 
 private const val TIMEOUT_FOR_JOBB_TIMER: Long = 4
 
+private val logger = LoggerFactory.getLogger(DatabaseService::class.java)
+
 class DatabaseService constructor(private val jt: JdbcTemplate = hikariJdbcTemplate, private val useHsql: Boolean = false) {
+
+    fun sjekkDatabase(): String =
+        try {
+            jt.queryForObject("SELECT COUNT(1) FROM arkivpost", Integer::class.java)
+            "OK"
+        } catch (e: Exception) {
+            logger.error("Klarte ikke å koble opp mot database", e)
+            e.message ?: "Feil, ingen feilmelding gitt"
+        }
+
 
     fun hentHenvendelse(id: Long): Arkivpost? {
         val arkivpostSql = "SELECT * FROM arkivpost WHERE arkivpostId = ?"
