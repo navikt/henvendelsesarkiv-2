@@ -25,8 +25,12 @@ resources:
       memory: 1536Mi
 fasitResources:
     used:
-      - alias: henvendelsesarkivDataSource
+      - alias: henvendelsesarkiv2DataSource
         resourceType: DataSource
+        propertyMap:
+          url: HENVENDELSESARKIVDATASOURCE_URL
+          username: HENVENDELSESARKIVDATASOURCE_USERNAME
+          password: HENVENDELSESARKIVDATASOURCE_PASSWORD
       - alias: appdynamics
         resourceType: ApplicationProperties
       - alias: srvhenvendelsesarkiv2
