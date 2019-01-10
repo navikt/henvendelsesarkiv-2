@@ -9,9 +9,7 @@ import io.ktor.http.ContentType
 import io.ktor.http.content.TextContent
 import kotlinx.coroutines.runBlocking
 import no.nav.henvendelsesarkiv.fasitProperties
-import org.slf4j.LoggerFactory
 
-private val log = LoggerFactory.getLogger("henvendelsesarkiv.PepClient")
 private val url = fasitProperties.abacEndpoint
 private val gson = GsonBuilder().setPrettyPrinting().create()
 
