@@ -1,40 +1,36 @@
 language: java
-
 jdk:
   - oraclejdk8
-
 services: docker
-
 branches:
-  except: /^[0-9]/
-
+  except: "/^[0-9]/"
 env:
   global:
-    - TZ='Europe/Oslo'
-    - RELEASE_VERSION="$(git fetch --unshallow || true && git rev-list --count $TRAVIS_COMMIT)"
-    - APPLICATION_NAME='henvendelsesarkiv'
-    - DOCKER_IMAGE_FULL_NAME="navikt/$APPLICATION_NAME:$RELEASE_VERSION"
-
+  - TZ='Europe/Oslo'
+  - RELEASE_VERSION="$(git fetch --unshallow || true && git rev-list --count $TRAVIS_COMMIT)"
+  - APPLICATION_NAME='henvendelsesarkiv'
+  - DOCKER_IMAGE_FULL_NAME="navikt/$APPLICATION_NAME:$RELEASE_VERSION"
+  - GITHUB_APP_ID=23451
 before_install:
+  - openssl aes-256-cbc -K $encrypted_2741ceb232eb_key -iv $encrypted_2741ceb232eb_iv -in travis/personoversiktci.enc -out travis/personoversikt-ci.2019-01-11.private-key.pem -d
+  - git clone https://github.com/navikt/github-apps-support.git
+  - export PATH=`pwd`/github-apps-support/bin:$PATH
+  - export GH_TOKEN=$(generate-installation-token.sh `generate-jwt.sh ./travis/personoversiktci.pem $GITHUB_APP_ID`)
   - chmod +x gradlew
   - chmod +x gradle/wrapper/gradle-wrapper.jar
-
 script:
-  - ./gradlew clean test fatJar
+  - "./gradlew clean test fatJar"
   - docker build --build-arg app_name="$APPLICATION_NAME" -t "$DOCKER_IMAGE_FULL_NAME" .
-
 deploy:
   provider: script
   skip_cleanup: true
   script: chmod +x scripts/deploy.sh && scripts/deploy.sh
   on:
     branch: master
-
 after_deploy:
-  - git remote add auth-origin "https://${GITHUB_ACCESS_TOKEN}@github.com/${TRAVIS_REPO_SLUG}"
+  - git remote add auth-origin "https://x-access-token:${GH_TOKEN}@github.com/${TRAVIS_REPO_SLUG}"
   - git tag $RELEASE_VERSION
   - git push auth-origin --tags
-
 notifications:
   slack:
     secure: e28E3AlRM28ByukSj8KX1A+alKIxGVfsLsoQgLywC5H9UbGCSlXar4AE1Io1HlogytNW+o6vp2IYHlDPq3sgjDtEhThH5qQd5l3LXiJsmmG3HSw4YIdLv+OxWANBJdruDc19iReo53bB9bLbwpi+XFHVy6TAFuxtUX/f7dU3wVSPgp3K5ZhWglLjk1hH1apJJ1Gg2lgyiYnsK65zFgYDT1la053AWqh0hdc+AdyldGHXhlIX037Qj618Ci/m8dx3O77V5U+GAyAKY0QynVme3BG7Uw1r9lxPWdKp5A/U02n6s3RdPEw5IUJ+EbEDBjmd9NMT4A7Q3yBhZpQPUYB084wX8wwdeMDVvnGwImCZ7NYfg+iDR6D6+LqpD4z2yag8txcdoGuzxVot+JhhYJ9lcu7wsEX+KgF0+BGgIQsKoneZUyw0gVYFcAkDqU7oQg0DLE0VDMCIjbfwM0/juxoutRiwmslWRV/0MFDWSSWnQBEsBHKOhAEtqcYTaZ2tfk4rCFpVRWt1Q+APfEtySmTGd4CTOxvK399SA3Ovjb2MV96yRu3Y7jMg5mh31NxqeOjLrU9vu/8aBUo9EKgPuTsnr6m6AmIopnSrtXrBkMZja/+9L1cePFPa/6KSwOsJ4v+7oiBa+evDJmxWj3M3JLbH18xbf5iZFVRx8BpUVT+A+x8=
