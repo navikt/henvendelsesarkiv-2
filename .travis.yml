@@ -12,7 +12,7 @@ env:
   - DOCKER_IMAGE_FULL_NAME="navikt/$APPLICATION_NAME:$RELEASE_VERSION"
   - GITHUB_APP_ID=23451
 before_install:
-  - openssl aes-256-cbc -K $encrypted_2741ceb232eb_key -iv $encrypted_2741ceb232eb_iv -in travis/personoversiktci.enc -out travis/personoversikt-ci.2019-01-11.private-key.pem -d
+  - openssl aes-256-cbc -K $encrypted_2741ceb232eb_key -iv $encrypted_2741ceb232eb_iv -in travis/personoversiktci.enc -out travis/personoversiktci.pem -d
   - git clone https://github.com/navikt/github-apps-support.git
   - export PATH=`pwd`/github-apps-support/bin:$PATH
   - export GH_TOKEN=$(generate-installation-token.sh `generate-jwt.sh ./travis/personoversiktci.pem $GITHUB_APP_ID`)
