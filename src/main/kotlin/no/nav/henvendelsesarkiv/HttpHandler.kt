@@ -4,9 +4,6 @@ import io.ktor.application.install
 import io.ktor.auth.Authentication
 import io.ktor.auth.authenticate
 import io.ktor.auth.jwt.jwt
-import io.ktor.client.HttpClient
-import io.ktor.client.engine.apache.Apache
-import io.ktor.client.features.auth.basic.BasicAuth
 import io.ktor.features.CallLogging
 import io.ktor.features.ContentNegotiation
 import io.ktor.features.StatusPages
@@ -28,7 +25,7 @@ import java.time.LocalDateTime
 
 private const val REALM = "Henvendelsesarkiv JWT Realm"
 
-private val pepClient = PepClient(bias = Decision.Deny, httpClient = createAbacHttpClient())
+private val pepClient = PepClient(bias = Decision.Deny)
 
 fun createHttpServer(applicationState: ApplicationState, port: Int = 7070): ApplicationEngine = embeddedServer(Netty, port) {
     install(StatusPages) {
@@ -70,13 +67,4 @@ fun createHttpServer(applicationState: ApplicationState, port: Int = 7070): Appl
         }
     }
     applicationState.initialized = true
-}
-
-private fun createAbacHttpClient(): HttpClient {
-    return HttpClient(Apache) {
-        install(BasicAuth) {
-            username = fasitProperties.abacUser
-            password = fasitProperties.abacPass
-        }
-    }
 }

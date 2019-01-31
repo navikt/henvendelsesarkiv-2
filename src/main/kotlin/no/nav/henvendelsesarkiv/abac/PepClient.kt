@@ -2,6 +2,8 @@ package no.nav.henvendelsesarkiv.abac
 
 import com.google.gson.GsonBuilder
 import io.ktor.client.HttpClient
+import io.ktor.client.engine.apache.Apache
+import io.ktor.client.features.auth.basic.BasicAuth
 import io.ktor.client.request.post
 import io.ktor.client.response.HttpResponse
 import io.ktor.client.response.readText
@@ -12,28 +14,37 @@ import no.nav.henvendelsesarkiv.fasitProperties
 
 private val url = fasitProperties.abacEndpoint
 private val gson = GsonBuilder().setPrettyPrinting().create()
+private val abacCache = AbacCache()
 
 private const val XACML_CONTENT_TYPE = "application/xacml+json"
 private const val PEP_ID = "henvendelsesarkiv"
 private const val DOMENE = "brukerdialog"
 
-class PepClient(private val bias: Decision, private val httpClient: HttpClient) {
+class PepClient(private val bias: Decision) {
 
-    fun checkAccess(bearerToken: String?, action: String): Boolean {
+    fun checkAccess(bearerToken: String?, method: String, action: String): Boolean {
         requireNotNull(bearerToken) { "Authorization token not set" }
         val token = bearerToken.substringAfter(" ")
-        return hasAccessToResource(extractBodyFromOidcToken(token), action)
+        return hasAccessToResource(extractBodyFromOidcToken(token), method, action)
     }
 
-    private fun hasAccessToResource(oidcTokenBody: String, action: String): Boolean {
+    private fun hasAccessToResource(oidcTokenBody: String, method:String, action: String): Boolean {
+        val cachedResponse = abacCache.hasAccess(oidcTokenBody, method, action)
+        if (cachedResponse != null) {
+            return cachedResponse
+        }
+
         val response = evaluate(createRequestWithDefaultHeaders(oidcTokenBody, action))
-        return createBiasedDecision(response.getDecision()) == Decision.Permit
+        val decision = createBiasedDecision(response.getDecision()) == Decision.Permit
+        abacCache.storeResultOfLookup(oidcTokenBody, method, action, decision)
+        return decision
     }
 
     private fun evaluate(xacmlRequestBuilder: XacmlRequestBuilder): XacmlResponseWrapper {
         val xacmlJson = gson.toJson(xacmlRequestBuilder.build())
 
         return runBlocking {
+            val httpClient = createAbacHttpClient()
             val result = httpClient.post<HttpResponse>(url) {
                 body = TextContent(xacmlJson, ContentType.parse(XACML_CONTENT_TYPE))
             }
@@ -41,6 +52,7 @@ class PepClient(private val bias: Decision, private val httpClient: HttpClient) 
                 throw RuntimeException("ABAC call failed with ${result.status.value}")
             }
             val res = result.readText()
+            httpClient.close()
             XacmlResponseWrapper(res)
         }
     }
@@ -63,5 +75,14 @@ class PepClient(private val bias: Decision, private val httpClient: HttpClient) 
 
     private fun extractBodyFromOidcToken(token: String): String {
         return token.substringAfter(".").substringBefore(".")
+    }
+}
+
+private fun createAbacHttpClient(): HttpClient {
+    return HttpClient(Apache) {
+        install(BasicAuth) {
+            username = fasitProperties.abacUser
+            password = fasitProperties.abacPass
+        }
     }
 }
