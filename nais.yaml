@@ -18,7 +18,7 @@ prometheus:
     path: /prometheus
 resources:
     limits:
-      cpu: 250m
+      cpu: 450m
       memory: 500Mi
     requests:
       cpu: 150m
