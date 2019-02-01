@@ -21,25 +21,25 @@ private val log = LoggerFactory.getLogger("henvendelsesarkiv.ArkivpostRoutes")
 
 fun Route.arkivpostRoutes(pepClient: PepClient) {
     get("/arkivpost/{arkivpostId}") {
-        if (!pepClient.checkAccess(call.request.header("Authorization"), "read"))
+        if (!pepClient.checkAccess(call.request.header("Authorization"), "hentArkivpost", "read"))
             call.respond(HttpStatusCode.Forbidden)
         hentArkivpost()
     }
 
     get("/temagrupper/{aktørId}") {
-        if (!pepClient.checkAccess(call.request.header("Authorization"), "read"))
+        if (!pepClient.checkAccess(call.request.header("Authorization"), "hentTemagrupper", "read"))
             call.respond(HttpStatusCode.Forbidden)
         hentTemagrupper()
     }
 
     get("/arkivpost/aktoer/{aktørId}") {
-        if (!pepClient.checkAccess(call.request.header("Authorization"), "read"))
+        if (!pepClient.checkAccess(call.request.header("Authorization"), "hentArkivpostForAktør", "read"))
             call.respond(HttpStatusCode.Forbidden)
         hentArkivpostForAktoer()
     }
 
     post("/arkivpost") {
-        if (!pepClient.checkAccess(call.request.header("Authorization"), "create"))
+        if (!pepClient.checkAccess(call.request.header("Authorization"), "opprettArkivpost", "create"))
             call.respond(HttpStatusCode.Forbidden)
         val arkivpost: Arkivpost = call.receive()
         val arkivpostId = DatabaseService().opprettHenvendelse(arkivpost)
@@ -47,7 +47,7 @@ fun Route.arkivpostRoutes(pepClient: PepClient) {
     }
 
     post("/arkivpost/{arkivpostId}/utgaar") {
-        if (!pepClient.checkAccess(call.request.header("Authorization"), "update"))
+        if (!pepClient.checkAccess(call.request.header("Authorization"), "settUtgårDato", "update"))
             call.respond(HttpStatusCode.Forbidden)
         try {
             settUtgaarDato()
