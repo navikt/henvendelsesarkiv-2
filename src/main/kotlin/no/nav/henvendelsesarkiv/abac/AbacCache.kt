@@ -10,9 +10,9 @@ private data class AbacCacheValue(val timestamp: Long, val hasAccess: Boolean)
 
 private val gson = GsonBuilder().create()
 
-private const val EXPIRY = 1000 * 60 * 5
+private const val EXPIRY_FIVE_MINUTES = 1000 * 60 * 5
 
-class AbacCache(private val cacheExpiry: Int = EXPIRY) {
+class AbacCache(private val cacheExpiry: Int = EXPIRY_FIVE_MINUTES) {
     private val cache = mutableMapOf<AbacCackeKey, AbacCacheValue>()
 
     fun hasAccess(token: String, method: String, action: String): Boolean? {

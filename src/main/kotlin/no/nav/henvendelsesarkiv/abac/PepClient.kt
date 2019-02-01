@@ -45,44 +45,44 @@ class PepClient(private val bias: Decision) {
 
         return runBlocking {
             val httpClient = createAbacHttpClient()
-            val result = httpClient.post<HttpResponse>(url) {
-                body = TextContent(xacmlJson, ContentType.parse(XACML_CONTENT_TYPE))
+            httpClient.use { httpClient ->
+                val result = httpClient.post<HttpResponse>(url) {
+                    body = TextContent(xacmlJson, ContentType.parse(XACML_CONTENT_TYPE))
+                }
+                if (result.status.value != 200) {
+                    throw RuntimeException("ABAC call failed with ${result.status.value}")
+                }
+                val res = result.readText()
+                XacmlResponseWrapper(res)
             }
-            if (result.status.value != 200) {
-                throw RuntimeException("ABAC call failed with ${result.status.value}")
-            }
-            val res = result.readText()
-            httpClient.close()
-            XacmlResponseWrapper(res)
         }
     }
 
-    private fun createRequestWithDefaultHeaders(oidcTokenBody: String, action: String): XacmlRequestBuilder {
-        return XacmlRequestBuilder()
+    private fun createRequestWithDefaultHeaders(oidcTokenBody: String, action: String): XacmlRequestBuilder =
+            XacmlRequestBuilder()
                 .addEnvironmentAttribute(ENVIRONMENT_OIDC_TOKEN_BODY, oidcTokenBody)
                 .addEnvironmentAttribute(ENVIRONMENT_PEP_ID, PEP_ID)
                 .addResourceAttribute(RESOURCE_DOMENE, DOMENE)
                 .addActionAttribute(ACTION_ID, action)
-    }
-
-    private fun createBiasedDecision(decision: Decision): Decision {
-        return when (decision) {
-            Decision.NotApplicable, Decision.Indeterminate -> bias
-            else -> decision
-        }
-    }
 
 
-    private fun extractBodyFromOidcToken(token: String): String {
-        return token.substringAfter(".").substringBefore(".")
-    }
+    private fun createBiasedDecision(decision: Decision): Decision =
+            when (decision) {
+                Decision.NotApplicable, Decision.Indeterminate -> bias
+                else -> decision
+            }
+
+
+
+    private fun extractBodyFromOidcToken(token: String): String =
+            token.substringAfter(".").substringBefore(".")
+
 }
 
-private fun createAbacHttpClient(): HttpClient {
-    return HttpClient(Apache) {
-        install(BasicAuth) {
-            username = fasitProperties.abacUser
-            password = fasitProperties.abacPass
+private fun createAbacHttpClient(): HttpClient =
+        HttpClient(Apache) {
+            install(BasicAuth) {
+                username = fasitProperties.abacUser
+                password = fasitProperties.abacPass
+            }
         }
-    }
-}
