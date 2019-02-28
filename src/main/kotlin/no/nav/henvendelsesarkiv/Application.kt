@@ -32,7 +32,11 @@ fun main() {
 
 private fun startKasseringsjobb(timer: Timer) {
     timer.schedule(FEM_MINUTTER, FEM_MINUTTER) {
-        DatabaseService().kasserUtgaatteHenvendelser()
+        try {
+            DatabaseService().kasserUtgaatteHenvendelser()
+        } catch (e: Exception) {
+            log.error("Kassering feilet, men schedulering må overleve, så dette bare logges", e)
+        }
     }
 
 }

@@ -36,7 +36,16 @@ fun main() {
 
     timer.schedule(1, 5000) {
         println("KASSERER...")
+        try {
+            metodeSomKaster()
+        } catch (e: Exception) {
+            println("Ignore...")
+        }
     }
 
     applicationServer.start(wait = true)
+}
+
+private fun metodeSomKaster() {
+    throw Exception("Iiiik")
 }
