@@ -47,5 +47,5 @@ fun main() {
 }
 
 private fun metodeSomKaster() {
-    throw Exception("Iiiik")
+    throw Exception("Testfeil")
 }
