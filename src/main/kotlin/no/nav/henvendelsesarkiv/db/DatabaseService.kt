@@ -87,7 +87,7 @@ class DatabaseService constructor(private val jt: JdbcTemplate = hikariJdbcTempl
 
     fun kasserUtgaatteHenvendelser() {
         val terminereJobb = LocalDateTime.now().plusHours(TIMEOUT_FOR_JOBB_TIMER)
-        val sql = "SELECT arkivpostId FROM arkivpost WHERE utgaarDato <= ?"
+        val sql = "SELECT arkivpostId FROM arkivpost WHERE utgaarDato <= ? AND status != ${ArkivStatusType.KASSERT.name}"
         val list = jt.queryForList(sql, Long::class.java, Timestamp(System.currentTimeMillis()))
 
         for (arkivpostId in list) {
