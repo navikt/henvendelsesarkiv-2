@@ -4,10 +4,11 @@ import org.slf4j.LoggerFactory
 import java.io.FileInputStream
 import java.util.*
 import java.util.concurrent.TimeUnit
+import kotlin.concurrent.schedule
 
 private val log = LoggerFactory.getLogger("henvendelsesarkiv.Application")
 
-fun main(args: Array<String>) {
+fun main() {
     val properties = Properties()
     properties.load(FileInputStream(System.getProperty("user.home") + "/localstart.properties"))
 
@@ -24,12 +25,27 @@ fun main(args: Array<String>) {
 
     val applicationState = ApplicationState()
     val applicationServer = createHttpServer(applicationState, 7070)
+    val timer = Timer()
 
     Runtime.getRuntime().addShutdownHook(Thread {
         log.info("Shutdown hook called, shutting down gracefully")
+        timer.cancel()
         applicationState.initialized = false
         applicationServer.stop(1, 1, TimeUnit.SECONDS)
     })
 
+    timer.schedule(1, 5000) {
+        println("KASSERER...")
+        try {
+            metodeSomKaster()
+        } catch (e: Exception) {
+            println("Ignore...")
+        }
+    }
+
     applicationServer.start(wait = true)
+}
+
+private fun metodeSomKaster() {
+    throw Exception("Testfeil")
 }
