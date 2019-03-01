@@ -31,6 +31,7 @@ fun main() {
 }
 
 private fun startKasseringsjobb(timer: Timer) {
+    log.info("Starter kasseringsjobb.")
     timer.schedule(FEM_MINUTTER, FEM_MINUTTER) {
         try {
             DatabaseService().kasserUtgaatteHenvendelser()
