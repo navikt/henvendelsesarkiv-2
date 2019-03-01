@@ -87,7 +87,7 @@ class DatabaseService constructor(private val jt: JdbcTemplate = hikariJdbcTempl
 
     fun kasserUtgaatteHenvendelser() {
         val terminereJobb = LocalDateTime.now().plusHours(TIMEOUT_FOR_JOBB_TIMER)
-        val sql = "SELECT arkivpostId FROM arkivpost WHERE utgaarDato <= ? AND status != ${ArkivStatusType.KASSERT.name}"
+        val sql = "SELECT arkivpostId FROM arkivpost WHERE utgaarDato <= ? AND status != ${addDashes(ArkivStatusType.KASSERT.name)}"
         val list = jt.queryForList(sql, Long::class.java, Timestamp(System.currentTimeMillis()))
 
         for (arkivpostId in list) {
@@ -99,9 +99,9 @@ class DatabaseService constructor(private val jt: JdbcTemplate = hikariJdbcTempl
         }
     }
 
-    private fun wrapInMax(sql: String, max: Int?): String {
-        return max?.let { "SELECT * FROM ($sql) WHERE ROWNUM <= $it" } ?: sql
-    }
+    private fun addDashes(str: String): String = "'$str'"
+
+    private fun wrapInMax(sql: String, max: Int?): String = max?.let { "SELECT * FROM ($sql) WHERE ROWNUM <= $it" } ?: sql
 
     private fun insertIntoDb(arkivpost: Arkivpost) {
         jt.update(ARKIVPOST_SQL) {
