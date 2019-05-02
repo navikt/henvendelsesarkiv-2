@@ -25,6 +25,17 @@ systemProp.https.nonProxyHosts=localhost|127.0.0.1|*.local|*.adeo.no|*.nav.no|*.
 # Teste lokalt
 Fyll ut de manglende feltene i StartKtorLocal.kt, ved å legge inn verdier i `user.home/localstart.properties` og kjør.
 
+# Kjøre flyway
+Opprette en mappe `flyway_config` og legg konfigfil under der med dette formatet:
+```
+flyway.url=jdbc:oracle:thin:@//<fra fasit>:<fra fasit>/<fra fasit>
+flyway.user=<fra fasit>
+flyway.password=<fra fasit>
+flyway.table=schema_version
+```
+
+Kjør så `./gradlew -Dflyway.configFiles=flyway_config/flyway_q6.conf flywayMigrate`
+
 ## Henvendelser
 
 Spørsmål knyttet til koden eller prosjektet kan rettes mot:
