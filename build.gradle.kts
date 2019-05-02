@@ -18,6 +18,7 @@ val mainClass = "no.nav.henvendelsesarkiv.ApplicationKt"
 plugins {
     application
     kotlin("jvm") version "1.3.0"
+    id("org.flywaydb.flyway") version "5.2.4"
 }
 
 buildscript {

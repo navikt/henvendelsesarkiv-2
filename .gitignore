@@ -10,3 +10,6 @@ build/
 # Generated sources
 src/generated
 .DS_Store
+
+# Flyway config
+flyway_config/
