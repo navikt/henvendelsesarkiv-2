@@ -1,6 +1,6 @@
 package no.nav.henvendelsesarkiv
 
-import no.nav.henvendelsesarkiv.db.DatabaseService
+import no.nav.henvendelsesarkiv.db.UpdateService
 import org.slf4j.LoggerFactory
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -34,7 +34,7 @@ private fun startKasseringsjobb(timer: Timer) {
     log.info("Starter kasseringsjobb.")
     timer.schedule(FEM_MINUTTER, FEM_MINUTTER) {
         try {
-            DatabaseService().kasserUtgaatteHenvendelser()
+            UpdateService().kasserUtgaatteHenvendelser()
         } catch (e: Exception) {
             log.error("Kassering feilet, men schedulering må overleve, så dette bare logges", e)
         }

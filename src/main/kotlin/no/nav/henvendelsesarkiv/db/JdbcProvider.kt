@@ -5,6 +5,8 @@ import com.zaxxer.hikari.HikariDataSource
 import no.nav.henvendelsesarkiv.FasitProperties
 import no.nav.henvendelsesarkiv.SingletonHolder
 import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.jdbc.datasource.DataSourceTransactionManager
+import org.springframework.transaction.support.TransactionTemplate
 
 class ConnectionPool private constructor(fasit: FasitProperties) {
     var dataSource: HikariDataSource
@@ -22,4 +24,4 @@ class ConnectionPool private constructor(fasit: FasitProperties) {
     companion object : SingletonHolder<ConnectionPool, FasitProperties>(::ConnectionPool)
 }
 
-val hikariJdbcTemplate = JdbcTemplate(ConnectionPool.getInstance(FasitProperties()).dataSource)
+val hikariDatasource = ConnectionPool.getInstance(FasitProperties()).dataSource
