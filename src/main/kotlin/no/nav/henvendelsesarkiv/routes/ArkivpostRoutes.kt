@@ -12,7 +12,8 @@ import io.ktor.routing.get
 import io.ktor.routing.post
 import io.ktor.util.pipeline.PipelineContext
 import no.nav.henvendelsesarkiv.abac.PepClient
-import no.nav.henvendelsesarkiv.db.DatabaseService
+import no.nav.henvendelsesarkiv.db.SelectService
+import no.nav.henvendelsesarkiv.db.UpdateService
 import no.nav.henvendelsesarkiv.db.lagDateTime
 import no.nav.henvendelsesarkiv.model.Arkivpost
 import org.slf4j.LoggerFactory
@@ -42,7 +43,7 @@ fun Route.arkivpostRoutes(pepClient: PepClient) {
         if (!pepClient.checkAccess(call.request.header("Authorization"), "opprettArkivpost", "create"))
             call.respond(HttpStatusCode.Forbidden)
         val arkivpost: Arkivpost = call.receive()
-        val arkivpostId = DatabaseService().opprettHenvendelse(arkivpost)
+        val arkivpostId = UpdateService().opprettHenvendelse(arkivpost)
         call.respond(arkivpostId)
     }
 
@@ -62,7 +63,7 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.hentArkivpost() {
     if (arkivpostId == null) {
         call.respond(HttpStatusCode.BadRequest)
     } else {
-        val arkivpost = DatabaseService().hentHenvendelse(arkivpostId)
+        val arkivpost = SelectService().hentHenvendelse(arkivpostId)
         if (arkivpost == null) {
             call.respond(HttpStatusCode.NotFound)
         } else {
@@ -76,7 +77,7 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.hentTemagrupper() {
     if (aktoerId == null) {
         call.respond(HttpStatusCode.BadRequest)
     } else {
-        call.respond(DatabaseService().hentTemagrupper(aktoerId))
+        call.respond(SelectService().hentTemagrupper(aktoerId))
     }
 }
 
@@ -87,7 +88,7 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.settUtgaarDato() {
     if (arkivpostId == null || utgaarDato == null) {
         call.respond(HttpStatusCode.BadRequest)
     } else {
-        DatabaseService().settUtgaarDato(arkivpostId, utgaarDato)
+        SelectService().settUtgaarDato(arkivpostId, utgaarDato)
         call.respond(HttpStatusCode.OK)
     }
     //TODO: Burde det kastes 500-feil om den kommer hit? Gjelder kanskje flere tjenestekall?
@@ -102,6 +103,6 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.hentArkivpostForAktoe
     if (aktoerId == null) {
         call.respond(HttpStatusCode.BadRequest)
     } else {
-        call.respond(DatabaseService().hentHenvendelserForAktoer(aktoerId, fra, til, max))
+        call.respond(SelectService().hentHenvendelserForAktoer(aktoerId, fra, til, max))
     }
 }

@@ -9,7 +9,7 @@ import io.ktor.routing.Routing
 import io.ktor.routing.get
 import io.prometheus.client.CollectorRegistry
 import io.prometheus.client.exporter.common.TextFormat
-import no.nav.henvendelsesarkiv.db.DatabaseService
+import no.nav.henvendelsesarkiv.db.SelectService
 
 fun Routing.naisRoutes(readinessCheck: () -> Boolean,
                        livenessCheck: () -> Boolean = { true },
@@ -39,7 +39,7 @@ fun Routing.naisRoutes(readinessCheck: () -> Boolean,
     }
 
     get("/internal/selftest") {
-        call.respondText(DatabaseService().sjekkDatabase())
+        call.respondText(SelectService().sjekkDatabase())
     }
 
 }
