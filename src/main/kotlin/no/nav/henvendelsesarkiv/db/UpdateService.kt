@@ -30,6 +30,12 @@ private const val VEDLEGG_SQL = """
             )
             """
 
+private const val SKYGGE_OPPDATERING_SQL = """
+            INSERT INTO skygge_vedlegg
+                SELECT arkivpostid, SYSDATE, dokument FROM vedlegg
+                WHERE arkivpostid = ?
+            """
+
 class UpdateService constructor(dataSource: DataSource = hikariDatasource, private val useHsql: Boolean = false) {
     private val jdbcTemplate: JdbcTemplate
     private val transactionTemplate: TransactionTemplate
@@ -63,6 +69,16 @@ class UpdateService constructor(dataSource: DataSource = hikariDatasource, priva
                 break
             }
         }
+    }
+
+    fun settUtgaarDato(arkivpostId: Long, dato: LocalDateTime) {
+        if (dato.isBefore(LocalDateTime.now())) {
+            // Dette er et hint om at dette er en sletting, da skal vi lagre unna vedlegg i egen tabell
+            // med 6 måneders angrefrist (gitt av joark-PO)
+            jdbcTemplate.update(SKYGGE_OPPDATERING_SQL, arkivpostId)
+        }
+        val sql = "UPDATE arkivpost SET utgaarDato = ? WHERE arkivpostId = ?"
+        jdbcTemplate.update(sql, Timestamp(hentMillisekunder(dato)), arkivpostId)
     }
 
     private fun opprettArkivpost(arkivpost: Arkivpost) {
