@@ -55,11 +55,6 @@ class SelectService constructor(dataSource: DataSource = hikariDatasource) {
         return arkivposter
     }
 
-    fun settUtgaarDato(arkivpostId: Long, dato: LocalDateTime) {
-        val sql = "UPDATE arkivpost SET utgaarDato = ? WHERE arkivpostId = ?"
-        jt.update(sql, Timestamp(hentMillisekunder(dato)), arkivpostId)
-    }
-
     private fun wrapInMax(sql: String, max: Int?): String = max?.let { "SELECT * FROM ($sql) WHERE ROWNUM <= $it" } ?: sql
 
     private fun setParams(aktoerId: String, fra: LocalDateTime?, til: LocalDateTime?): PreparedStatementSetter {

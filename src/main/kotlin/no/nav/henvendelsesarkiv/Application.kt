@@ -1,6 +1,8 @@
 package no.nav.henvendelsesarkiv
 
 import no.nav.henvendelsesarkiv.db.UpdateService
+import no.nav.henvendelsesarkiv.db.hikariDatasource
+import org.flywaydb.core.Flyway
 import org.slf4j.LoggerFactory
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -14,6 +16,8 @@ val fasitProperties = FasitProperties()
 data class ApplicationState(var running: Boolean = true, var initialized: Boolean = false)
 
 fun main() {
+    runDatabaseMigrationOnStartup()
+
     val applicationState = ApplicationState()
     val applicationServer = createHttpServer(applicationState = applicationState)
     val kasseringstimer = Timer()
@@ -28,6 +32,10 @@ fun main() {
     startKasseringsjobb(kasseringstimer)
 
     applicationServer.start(wait = true)
+}
+
+private fun runDatabaseMigrationOnStartup() {
+    Flyway.configure().dataSource(hikariDatasource).load().migrate()
 }
 
 private fun startKasseringsjobb(timer: Timer) {

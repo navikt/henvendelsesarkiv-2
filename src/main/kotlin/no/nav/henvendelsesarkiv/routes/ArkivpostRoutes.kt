@@ -88,7 +88,7 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.settUtgaarDato() {
     if (arkivpostId == null || utgaarDato == null) {
         call.respond(HttpStatusCode.BadRequest)
     } else {
-        SelectService().settUtgaarDato(arkivpostId, utgaarDato)
+        UpdateService().settUtgaarDato(arkivpostId, utgaarDato)
         call.respond(HttpStatusCode.OK)
     }
     //TODO: Burde det kastes 500-feil om den kommer hit? Gjelder kanskje flere tjenestekall?
