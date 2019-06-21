@@ -93,7 +93,7 @@ object DatabaseSpec : Spek({
             on("update utgår dato") {
                 val nyTid = LocalDateTime.now().plusHours(5).withNano(0)
                 updateService.opprettHenvendelse(lagTomArkivpost())
-                selectService.settUtgaarDato(1, nyTid)
+                updateService.settUtgaarDato(1, nyTid)
 
                 it("should have a new date") {
                     val arkivpost = selectService.hentHenvendelse(1)
