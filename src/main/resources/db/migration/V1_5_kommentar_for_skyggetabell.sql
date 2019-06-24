@@ -1,0 +1,1 @@
+COMMENT ON COLUMN SKYGGE_VEDLEGG.OPPRETTET IS 'Dato for opprettelse, ryddes etter 6 mnd. Godkjent av Team Dokumentasjonsforvaltning og Fagarkiv.';

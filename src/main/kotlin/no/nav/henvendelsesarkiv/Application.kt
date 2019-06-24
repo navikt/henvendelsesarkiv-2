@@ -35,7 +35,9 @@ fun main() {
 }
 
 private fun runDatabaseMigrationOnStartup() {
-    Flyway.configure().dataSource(hikariDatasource).load().migrate()
+    val flyway = Flyway()
+    flyway.dataSource = hikariDatasource
+    flyway.migrate()
 }
 
 private fun startKasseringsjobb(timer: Timer) {

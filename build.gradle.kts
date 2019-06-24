@@ -12,7 +12,7 @@ val springJdbcVersion = "5.1.1.RELEASE"
 val hikariCpVersion = "3.2.0"
 val prometheusVersion = "0.4.0"
 val ojdbcVersion = "11.2.0.3"
-val flywayVersion = "5.2.4"
+val flywayVersion = "4.2.0"
 
 val mainClass = "no.nav.henvendelsesarkiv.ApplicationKt"
 
