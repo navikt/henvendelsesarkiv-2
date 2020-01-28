@@ -1,19 +1,19 @@
 package no.nav.henvendelsesarkiv
 
 class ApplicationProperties {
-    val appName: String = getProperty(FasitPropertyNames.APP_NAME)
-    val appVersion: String = getProperty(FasitPropertyNames.APP_VERSION)
-    val dbUrl: String = getProperty(FasitPropertyNames.HENVENDELSESARKIVDATASOURCE_URL)
-    val dbUsername: String = getProperty(FasitPropertyNames.HENVENDELSESARKIVDATASOURCE_USERNAME)
-    val dbPassword: String = getProperty(FasitPropertyNames.HENVENDELSESARKIVDATASOURCE_PASSWORD)
-    val abacEndpoint: String = getProperty(FasitPropertyNames.ABAC_PDP_ENDPOINT_URL)
-    val abacUser: String = getProperty(FasitPropertyNames.SRVHENVENDELSESARKIV2_USERNAME)
-    val abacPass: String = getProperty(FasitPropertyNames.SRVHENVENDELSESARKIV2_PASSWORD)
-    val jwksUrl: String = getProperty(FasitPropertyNames.SECURITY_TOKEN_SERVICE_JWKS_URL)
-    val jwtIssuer: String = getProperty(FasitPropertyNames.SECURITY_TOKEN_SERVICE_ISSUER_URL)
+    val appName: String = getProperty(PropertyNames.APP_NAME)
+    val appVersion: String = getProperty(PropertyNames.APP_VERSION)
+    val dbUrl: String = getProperty(PropertyNames.HENVENDELSESARKIVDATASOURCE_URL)
+    val dbUsername: String = getProperty(PropertyNames.HENVENDELSESARKIVDATASOURCE_USERNAME)
+    val dbPassword: String = getProperty(PropertyNames.HENVENDELSESARKIVDATASOURCE_PASSWORD)
+    val abacEndpoint: String = getProperty(PropertyNames.ABAC_PDP_ENDPOINT_URL)
+    val abacUser: String = getProperty(PropertyNames.SRVHENVENDELSESARKIV2_USERNAME)
+    val abacPass: String = getProperty(PropertyNames.SRVHENVENDELSESARKIV2_PASSWORD)
+    val jwksUrl: String = getProperty(PropertyNames.SECURITY_TOKEN_SERVICE_JWKS_URL)
+    val jwtIssuer: String = getProperty(PropertyNames.SECURITY_TOKEN_SERVICE_ISSUER_URL)
 }
 
-enum class FasitPropertyNames {
+enum class PropertyNames {
     APP_NAME,
     APP_VERSION,
     HENVENDELSESARKIVDATASOURCE_URL,
@@ -26,5 +26,5 @@ enum class FasitPropertyNames {
     SECURITY_TOKEN_SERVICE_ISSUER_URL
 }
 
-fun getProperty(property: FasitPropertyNames, default: String? = null): String =
+fun getProperty(property: PropertyNames, default: String? = null): String =
         System.getenv(property.name) ?: System.getProperty(property.name) ?: default ?: throw RuntimeException("Missing variable $property")
