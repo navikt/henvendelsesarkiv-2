@@ -42,16 +42,16 @@ class UpdateService constructor(dataSource: DataSource = hikariDatasource, priva
 
     init {
         val dataSourceTransactionManager = DataSourceTransactionManager(dataSource)
-        jdbcTemplate = JdbcTemplate(dataSourceTransactionManager.dataSource)
+        jdbcTemplate = JdbcTemplate(dataSourceTransactionManager.dataSource!!)
         transactionTemplate = TransactionTemplate(dataSourceTransactionManager)
     }
 
     fun opprettHenvendelse(arkivpost: Arkivpost): Long {
         arkivpost.arkivpostId = nextSequenceValue()
 
-        transactionTemplate.execute { status ->
+        transactionTemplate.execute {
             opprettArkivpost(arkivpost)
-            arkivpost.vedleggListe.forEach{ opprettVedlegg(arkivpost.arkivpostId!!, it) }
+            arkivpost.vedleggListe.forEach{ vedlegg -> opprettVedlegg(arkivpost.arkivpostId!!, vedlegg) }
         }
 
         return arkivpost.arkivpostId!!

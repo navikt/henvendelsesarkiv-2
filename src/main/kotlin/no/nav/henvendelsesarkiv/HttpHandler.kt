@@ -25,9 +25,12 @@ import java.time.LocalDateTime
 
 private const val REALM = "Henvendelsesarkiv JWT Realm"
 
-private val pepClient = PepClient(bias = Decision.Deny)
 
-fun createHttpServer(applicationState: ApplicationState, port: Int = 7070): ApplicationEngine = embeddedServer(Netty, port) {
+fun createHttpServer(applicationState: ApplicationState, port: Int = 8080): ApplicationEngine = embeddedServer(Netty, port) {
+    val pepClient = PepClient(
+            applicationProperties = applicationState.properties,
+            bias = Decision.Deny
+    )
     install(StatusPages) {
         notFoundHandler()
         exceptionHandler()
@@ -35,9 +38,9 @@ fun createHttpServer(applicationState: ApplicationState, port: Int = 7070): Appl
 
     install(Authentication) {
         jwt {
-            val jwtConfig = JwtConfig()
+            val jwtConfig = JwtConfig(applicationState.properties)
             realm = REALM
-            verifier(jwtConfig.jwkProvider, fasitProperties.jwtIssuer)
+            verifier(jwtConfig.jwkProvider, applicationState.properties.jwtIssuer)
             validate { credentials ->
                 jwtConfig.validate(credentials)
             }

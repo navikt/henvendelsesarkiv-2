@@ -13,8 +13,8 @@ systemProp.https.proxyHost=webproxy-utvikler.nav.no
 systemProp.https.proxyPort=8088
 systemProp.https.nonProxyHosts=localhost|127.0.0.1|*.local|*.adeo.no|*.nav.no|*.aetat.no|*.devillo.no|*.oera.no|*devel
 ```
-* Legg inn din ident og passord fra fasit i gradle.properties.
-* Hent sertifikatet nav_truststore_nonproduction_ny2.jts fra fasit: https://fasit.adeo.no/resources/3816117?revision=3901254 og legg det i samme mappe 
+* Legg inn din ident og passord fra application i gradle.properties.
+* Hent sertifikatet nav_truststore_nonproduction_ny2.jts fra application: https://application.adeo.no/resources/3816117?revision=3901254 og legg det i samme mappe 
 * Hent sertifikat for gradle her: https://plugins.gradle.org/m2/ (klikk på hengelåsen og last ned .cer-fil) og legg det i samme mappe.
 * Benytt F:\programvare\kse-51 eller skriv kommando på kommandolinje for å legge gradle-sertifikatet inn i nav-truststore-sertifikatet
 * Åpne folderen til prosjektet i IntelliJ og benytt IntelliJ sin gradle-wrapper.
@@ -28,9 +28,9 @@ Fyll ut de manglende feltene i StartKtorLocal.kt, ved å legge inn verdier i `us
 # Kjøre flyway
 Opprette en mappe `flyway_config` og legg konfigfil under der med dette formatet:
 ```
-flyway.url=jdbc:oracle:thin:@//<fra fasit>:<fra fasit>/<fra fasit>
-flyway.user=<fra fasit>
-flyway.password=<fra fasit>
+flyway.url=jdbc:oracle:thin:@//<fra application>:<fra application>/<fra application>
+flyway.user=<fra application>
+flyway.password=<fra application>
 flyway.table=schema_version
 ```
 
