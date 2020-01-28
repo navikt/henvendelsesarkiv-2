@@ -20,8 +20,8 @@ data class ApplicationState(
 )
 
 fun main() {
-    runDatabaseMigrationOnStartup()
     loadEnvironmentFromVault()
+    runDatabaseMigrationOnStartup()
 
     val applicationState = ApplicationState(ApplicationProperties())
     val applicationServer = createHttpServer(applicationState = applicationState)
