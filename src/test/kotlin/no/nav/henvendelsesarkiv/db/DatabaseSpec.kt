@@ -22,8 +22,8 @@ object DatabaseSpec : Spek({
     describe("SelectService") {
         beforeGroup {
             jt = testJdbcTemplate()
-            selectService = SelectService(jt.dataSource)
-            updateService = UpdateService(jt.dataSource, true)
+            selectService = SelectService(jt.dataSource!!)
+            updateService = UpdateService(jt.dataSource!!, true)
         }
 
         beforeEachTest {

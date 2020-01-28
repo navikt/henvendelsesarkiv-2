@@ -11,14 +11,16 @@ import kotlin.concurrent.schedule
 private const val FEM_MINUTTER: Long = 1000 * 60 * 5
 private val log = LoggerFactory.getLogger("henvendelsesarkiv.Application")
 
-val fasitProperties = FasitProperties()
-
-data class ApplicationState(var running: Boolean = true, var initialized: Boolean = false)
+data class ApplicationState(
+        val properties: ApplicationProperties,
+        var running: Boolean = true,
+        var initialized: Boolean = false
+)
 
 fun main() {
     runDatabaseMigrationOnStartup()
 
-    val applicationState = ApplicationState()
+    val applicationState = ApplicationState(ApplicationProperties())
     val applicationServer = createHttpServer(applicationState = applicationState)
     val kasseringstimer = Timer()
 

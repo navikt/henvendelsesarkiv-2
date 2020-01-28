@@ -11,8 +11,9 @@ val logstashVersion = "5.1"
 val springJdbcVersion = "5.1.1.RELEASE"
 val hikariCpVersion = "3.2.0"
 val prometheusVersion = "0.4.0"
-val ojdbcVersion = "11.2.0.3"
+val ojdbcVersion = "19.3.0.0"
 val flywayVersion = "4.2.0"
+val naisUtilsVersion = "1.2020.01.23-17.30-c6684f7b3098"
 
 val mainClass = "no.nav.henvendelsesarkiv.ApplicationKt"
 
@@ -51,7 +52,8 @@ dependencies {
     compile("khttp:khttp:$khttpVersion")
     compile("io.ktor:ktor-client-apache:$ktorVersion")
     compile("org.flywaydb:flyway-core:$flywayVersion")
-    runtime("com.oracle:ojdbc6:$ojdbcVersion")
+    compile("no.nav.common:nais:$naisUtilsVersion")
+    runtime("com.oracle.ojdbc:ojdbc8:$ojdbcVersion")
 
     testCompile("org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion")
     testCompile("org.junit.jupiter:junit-jupiter-params:$junitJupiterVersion")
