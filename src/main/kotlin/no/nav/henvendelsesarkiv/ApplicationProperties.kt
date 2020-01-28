@@ -26,5 +26,9 @@ enum class PropertyNames {
     SECURITY_TOKEN_SERVICE_ISSUER_URL
 }
 
+fun setProperty(property: PropertyNames, value: String) {
+    System.setProperty(property.name, value)
+}
+
 fun getProperty(property: PropertyNames, default: String? = null): String =
         System.getenv(property.name) ?: System.getProperty(property.name) ?: default ?: throw RuntimeException("Missing variable $property")
