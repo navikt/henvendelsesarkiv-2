@@ -1,0 +1,4 @@
+{
+  "namespace": "q1",
+  "dbUrl": "jdbc:oracle:thin:@a01dbfl032.adeo.no:1521/henvendelsearkiv_q1"
+}

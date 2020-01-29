@@ -13,3 +13,5 @@ src/generated
 
 # Flyway config
 flyway_config/
+
+.vault.properties

@@ -1,0 +1,57 @@
+---
+kind: Application
+apiVersion: nais.io/v1alpha1
+metadata:
+  name: henvendelsesarkiv2
+  namespace: default
+  labels:
+    team: personoversikt
+spec:
+  image: navikt/henvendelsesarkiv
+  port: 8080
+  ingresses:
+  - https://henvendelsesarkiv2.nais.adeo.no
+  liveness:
+    path: isAlive
+    initialDelay: 60
+  readiness:
+    path: isReady
+    initialDelay: 60
+  prometheus:
+    enabled: true
+    path: /prometheus
+  replicas:
+    min: 2
+    max: 4
+    cpuThresholdPercentage: 50
+  resources:
+    requests:
+      cpu: 250m
+      memory: 1536Mi
+    limits:
+      cpu: 1500m
+      memory: 3072Mi
+  vault:
+    enabled: true
+    paths:
+    - kvPath: /oracle/data/prod/creds/henvendelsearkiv-user
+      mountPath: /var/run/secrets/nais.io/db_user
+    - kvPath: /serviceuser/data/prod/srvhenvendelsesarkiv2
+      mountPath: /var/run/secrets/nais.io/service_user
+    - kvPath: /apikey/appdynamics/prod
+      mountPath: /var/run/secrets/nais.io/vault
+  env:
+    - name: APP_NAME
+      value: "henvendelsesarkiv2"
+    - name: APP_VERSION
+      value: "{{ version }}"
+    - name: APP_ENVIRONMENT
+      value: "p"
+    - name: HENVENDELSESARKIVDATASOURCE_URL
+      value: "jdbc:oracle:thin:@(DESCRIPTION = (FAILOVER=on)(CONNECT_TIMEOUT= 15) (RETRY_COUNT=20) (RETRY_DELAY=3)(ADDRESS_LIST = (ADDRESS = (PROTOCOL = TCP) (HOST=a01dbfl030.adeo.no) (PORT=1521))) (ADDRESS_LIST = (ADDRESS = (PROTOCOL = TCP) (HOST=a01dbfl031.adeo.no) (PORT=1522))) (CONNECT_DATA= (SERVICE_NAME = henvendelsearkiv_ha)))"
+    - name: ABAC_PDP_ENDPOINT_URL
+      value: "https://wasapp.adeo.no/asm-pdp/authorize"
+    - name: SECURITY_TOKEN_SERVICE_JWKS_URL
+      value: "https://security-token-service.nais.adeo.no/rest/v1/sts/jwks"
+    - name: SECURITY_TOKEN_SERVICE_ISSUER_URL
+      value: "https://security-token-service.nais.adeo.no"

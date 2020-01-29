@@ -1,5 +1,7 @@
 package no.nav.henvendelsesarkiv
 
+import no.nav.common.nais.utils.NaisUtils
+import no.nav.henvendelsesarkiv.PropertyNames.*
 import no.nav.henvendelsesarkiv.db.UpdateService
 import no.nav.henvendelsesarkiv.db.hikariDatasource
 import org.flywaydb.core.Flyway
@@ -11,14 +13,17 @@ import kotlin.concurrent.schedule
 private const val FEM_MINUTTER: Long = 1000 * 60 * 5
 private val log = LoggerFactory.getLogger("henvendelsesarkiv.Application")
 
-val fasitProperties = FasitProperties()
-
-data class ApplicationState(var running: Boolean = true, var initialized: Boolean = false)
+data class ApplicationState(
+        val properties: ApplicationProperties,
+        var running: Boolean = true,
+        var initialized: Boolean = false
+)
 
 fun main() {
+    loadEnvironmentFromVault()
     runDatabaseMigrationOnStartup()
 
-    val applicationState = ApplicationState()
+    val applicationState = ApplicationState(ApplicationProperties())
     val applicationServer = createHttpServer(applicationState = applicationState)
     val kasseringstimer = Timer()
 
@@ -38,6 +43,16 @@ private fun runDatabaseMigrationOnStartup() {
     val flyway = Flyway()
     flyway.dataSource = hikariDatasource
     flyway.migrate()
+}
+
+private fun loadEnvironmentFromVault() {
+    val serviceUser = NaisUtils.getCredentials("service_user")
+    setProperty(SRVHENVENDELSESARKIV2_USERNAME, serviceUser.username)
+    setProperty(SRVHENVENDELSESARKIV2_PASSWORD, serviceUser.password)
+
+    val dbUser = NaisUtils.getCredentials("db_user")
+    setProperty(HENVENDELSESARKIVDATASOURCE_USERNAME, dbUser.username)
+    setProperty(HENVENDELSESARKIVDATASOURCE_PASSWORD, dbUser.password)
 }
 
 private fun startKasseringsjobb(timer: Timer) {

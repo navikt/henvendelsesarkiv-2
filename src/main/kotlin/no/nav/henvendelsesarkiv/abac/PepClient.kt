@@ -10,9 +10,8 @@ import io.ktor.client.response.readText
 import io.ktor.http.ContentType
 import io.ktor.http.content.TextContent
 import kotlinx.coroutines.runBlocking
-import no.nav.henvendelsesarkiv.fasitProperties
+import no.nav.henvendelsesarkiv.ApplicationProperties
 
-private val url = fasitProperties.abacEndpoint
 private val gson = GsonBuilder().setPrettyPrinting().create()
 private val abacCache = AbacCache()
 
@@ -20,7 +19,8 @@ private const val XACML_CONTENT_TYPE = "application/xacml+json"
 private const val PEP_ID = "henvendelsesarkiv"
 private const val DOMENE = "brukerdialog"
 
-class PepClient(private val bias: Decision) {
+class PepClient(private val applicationProperties: ApplicationProperties, private val bias: Decision) {
+    private val url = applicationProperties.abacEndpoint
 
     fun checkAccess(bearerToken: String?, method: String, action: String): Boolean {
         requireNotNull(bearerToken) { "Authorization token not set" }
@@ -44,8 +44,8 @@ class PepClient(private val bias: Decision) {
         val xacmlJson = gson.toJson(xacmlRequestBuilder.build())
 
         return runBlocking {
-            val httpClient = createAbacHttpClient()
-            httpClient.use { httpClient ->
+            val abacClient = createAbacHttpClient(applicationProperties)
+            abacClient.use { httpClient ->
                 val result = httpClient.post<HttpResponse>(url) {
                     body = TextContent(xacmlJson, ContentType.parse(XACML_CONTENT_TYPE))
                 }
@@ -79,10 +79,10 @@ class PepClient(private val bias: Decision) {
 
 }
 
-private fun createAbacHttpClient(): HttpClient =
+private fun createAbacHttpClient(applicationProperties: ApplicationProperties): HttpClient =
         HttpClient(Apache) {
             install(BasicAuth) {
-                username = fasitProperties.abacUser
-                password = fasitProperties.abacPass
+                username = applicationProperties.abacUser
+                password = applicationProperties.abacPass
             }
         }

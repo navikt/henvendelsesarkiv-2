@@ -1,0 +1,57 @@
+---
+kind: Application
+apiVersion: nais.io/v1alpha1
+metadata:
+  name: henvendelsesarkiv2
+  namespace: {{ namespace }}
+  labels:
+    team: personoversikt
+spec:
+  image: "{{image}}"
+  port: 8080
+  ingresses:
+  - https://henvendelsesarkiv2-{{ namespace }}.nais.preprod.local
+  liveness:
+    path: isAlive
+    initialDelay: 60
+  readiness:
+    path: isReady
+    initialDelay: 60
+  prometheus:
+    enabled: true
+    path: /prometheus
+  replicas:
+    min: 2
+    max: 4
+    cpuThresholdPercentage: 50
+  resources:
+    requests:
+      cpu: 250m
+      memory: 1536Mi
+    limits:
+      cpu: 1500m
+      memory: 3072Mi
+  vault:
+    enabled: true
+    paths:
+    - kvPath: /oracle/data/dev/creds/henvendelsearkiv_{{ namespace }}-user
+      mountPath: /var/run/secrets/nais.io/db_user
+    - kvPath: /serviceuser/data/dev/srvhenvendelsesarkiv2
+      mountPath: /var/run/secrets/nais.io/service_user
+    - kvPath: /apikey/appdynamics/dev
+      mountPath: /var/run/secrets/nais.io/vault
+  env:
+    - name: APP_NAME
+      value: "henvendelsesarkiv2"
+    - name: APP_VERSION
+      value: "{{ version }}"
+    - name: APP_ENVIRONMENT
+      value: "{{ namespace }}"
+    - name: HENVENDELSESARKIVDATASOURCE_URL
+      value: "{{ dbUrl }}"
+    - name: ABAC_PDP_ENDPOINT_URL
+      value: "https://wasapp-{{ namespace }}.adeo.no/asm-pdp/authorize"
+    - name: SECURITY_TOKEN_SERVICE_JWKS_URL
+      value: "https://security-token-service.nais.preprod.local/rest/v1/sts/jwks"
+    - name: SECURITY_TOKEN_SERVICE_ISSUER_URL
+      value: "https://security-token-service.nais.preprod.local"

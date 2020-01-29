@@ -2,26 +2,23 @@ package no.nav.henvendelsesarkiv.db
 
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
-import no.nav.henvendelsesarkiv.FasitProperties
+import no.nav.henvendelsesarkiv.ApplicationProperties
 import no.nav.henvendelsesarkiv.SingletonHolder
-import org.springframework.jdbc.core.JdbcTemplate
-import org.springframework.jdbc.datasource.DataSourceTransactionManager
-import org.springframework.transaction.support.TransactionTemplate
 
-class ConnectionPool private constructor(fasit: FasitProperties) {
+class ConnectionPool private constructor(application: ApplicationProperties) {
     var dataSource: HikariDataSource
     init {
         val config = HikariConfig()
-        config.jdbcUrl = fasit.dbUrl
-        config.username = fasit.dbUsername
-        config.password = fasit.dbPassword
+        config.jdbcUrl = application.dbUrl
+        config.username = application.dbUsername
+        config.password = application.dbPassword
         config.maximumPoolSize = 10
         config.minimumIdle = 2
         config.connectionTimeout = 1000
         dataSource = HikariDataSource(config)
     }
 
-    companion object : SingletonHolder<ConnectionPool, FasitProperties>(::ConnectionPool)
+    companion object : SingletonHolder<ConnectionPool, ApplicationProperties>(::ConnectionPool)
 }
 
-val hikariDatasource = ConnectionPool.getInstance(FasitProperties()).dataSource
+val hikariDatasource = ConnectionPool.getInstance(ApplicationProperties()).dataSource
