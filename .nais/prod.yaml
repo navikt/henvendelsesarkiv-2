@@ -7,7 +7,7 @@ metadata:
   labels:
     team: personoversikt
 spec:
-  image: navikt/henvendelsesarkiv
+  image: "{{image}}"
   port: 8080
   ingresses:
   - https://henvendelsesarkiv2.nais.adeo.no
