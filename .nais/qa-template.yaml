@@ -3,7 +3,7 @@ kind: Application
 apiVersion: nais.io/v1alpha1
 metadata:
   name: henvendelsesarkiv2
-  namespace: {{ namespace }}
+  namespace: "{{ namespace }}"
   labels:
     team: personoversikt
 spec:
