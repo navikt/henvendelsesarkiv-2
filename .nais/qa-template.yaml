@@ -3,7 +3,7 @@ kind: Application
 apiVersion: nais.io/v1alpha1
 metadata:
   name: henvendelsesarkiv2
-  namespace: {{ namespace }}
+  namespace: "{{ namespace }}"
   labels:
     team: personoversikt
 spec:
@@ -29,8 +29,8 @@ spec:
       cpu: 250m
       memory: 1536Mi
     limits:
-      cpu: 1500m
-      memory: 3072Mi
+      cpu: 500m
+      memory: 2366Mi
   vault:
     enabled: true
     paths:

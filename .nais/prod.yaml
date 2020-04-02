@@ -29,8 +29,8 @@ spec:
       cpu: 250m
       memory: 1536Mi
     limits:
-      cpu: 1500m
-      memory: 3072Mi
+      cpu: 500m
+      memory: 2366Mi
   vault:
     enabled: true
     paths:
