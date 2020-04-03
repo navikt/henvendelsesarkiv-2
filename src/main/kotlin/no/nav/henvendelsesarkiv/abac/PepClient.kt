@@ -5,11 +5,14 @@ import io.ktor.client.HttpClient
 import io.ktor.client.engine.apache.Apache
 import io.ktor.client.features.auth.basic.BasicAuth
 import io.ktor.client.request.post
+import io.ktor.client.request.request
 import io.ktor.client.response.HttpResponse
 import io.ktor.client.response.readText
 import io.ktor.http.ContentType
 import io.ktor.http.content.TextContent
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import no.nav.henvendelsesarkiv.ApplicationProperties
 
 private val gson = GsonBuilder().setPrettyPrinting().create()
@@ -21,14 +24,20 @@ private const val DOMENE = "brukerdialog"
 
 class PepClient(private val applicationProperties: ApplicationProperties, private val bias: Decision) {
     private val url = applicationProperties.abacEndpoint
+    private val abacClient = HttpClient(Apache) {
+        install(BasicAuth) {
+            username = applicationProperties.abacUser
+            password = applicationProperties.abacPass
+        }
+    }
 
-    fun checkAccess(bearerToken: String?, method: String, action: String): Boolean {
+    suspend fun checkAccess(bearerToken: String?, method: String, action: String): Boolean {
         requireNotNull(bearerToken) { "Authorization token not set" }
         val token = bearerToken.substringAfter(" ")
         return hasAccessToResource(extractBodyFromOidcToken(token), method, action)
     }
 
-    private fun hasAccessToResource(oidcTokenBody: String, method:String, action: String): Boolean {
+    private suspend fun hasAccessToResource(oidcTokenBody: String, method:String, action: String): Boolean {
         val cachedResponse = abacCache.hasAccess(oidcTokenBody, method, action)
         if (cachedResponse != null) {
             return cachedResponse
@@ -40,21 +49,17 @@ class PepClient(private val applicationProperties: ApplicationProperties, privat
         return decision
     }
 
-    private fun evaluate(xacmlRequestBuilder: XacmlRequestBuilder): XacmlResponseWrapper {
+    private suspend fun evaluate(xacmlRequestBuilder: XacmlRequestBuilder): XacmlResponseWrapper {
         val xacmlJson = gson.toJson(xacmlRequestBuilder.build())
-
-        return runBlocking {
-            val abacClient = createAbacHttpClient(applicationProperties)
-            abacClient.use { httpClient ->
-                val result = httpClient.post<HttpResponse>(url) {
-                    body = TextContent(xacmlJson, ContentType.parse(XACML_CONTENT_TYPE))
-                }
-                if (result.status.value != 200) {
-                    throw RuntimeException("ABAC call failed with ${result.status.value}")
-                }
-                val res = result.readText()
-                XacmlResponseWrapper(res)
+        return withContext(Dispatchers.IO) {
+            val result = abacClient.post<HttpResponse>(url) {
+                body = TextContent(xacmlJson, ContentType.parse(XACML_CONTENT_TYPE))
             }
+            if (result.status.value != 200) {
+                throw RuntimeException("ABAC call failed with ${result.status.value}")
+            }
+            val res = result.readText()
+            XacmlResponseWrapper(res)
         }
     }
 
@@ -78,11 +83,3 @@ class PepClient(private val applicationProperties: ApplicationProperties, privat
             token.substringAfter(".").substringBefore(".")
 
 }
-
-private fun createAbacHttpClient(applicationProperties: ApplicationProperties): HttpClient =
-        HttpClient(Apache) {
-            install(BasicAuth) {
-                username = applicationProperties.abacUser
-                password = applicationProperties.abacPass
-            }
-        }
