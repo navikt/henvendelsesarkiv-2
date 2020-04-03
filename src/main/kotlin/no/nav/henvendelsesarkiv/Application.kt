@@ -31,7 +31,7 @@ fun main() {
         log.info("Shutdown hook called, shutting down gracefully")
         kasseringstimer.cancel()
         applicationState.initialized = false
-        applicationServer.stop(5, 5, TimeUnit.SECONDS)
+        applicationServer.stop(10, 15, TimeUnit.SECONDS)
     })
 
     startKasseringsjobb(kasseringstimer)
