@@ -21,8 +21,8 @@ spec:
     enabled: true
     path: /prometheus
   replicas:
-    min: 2
-    max: 4
+    min: 4
+    max: 6
     cpuThresholdPercentage: 50
   resources:
     requests:
