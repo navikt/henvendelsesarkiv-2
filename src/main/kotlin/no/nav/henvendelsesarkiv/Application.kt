@@ -1,9 +1,12 @@
 package no.nav.henvendelsesarkiv
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import no.nav.common.nais.utils.NaisUtils
 import no.nav.henvendelsesarkiv.PropertyNames.*
 import no.nav.henvendelsesarkiv.db.UpdateService
-import no.nav.henvendelsesarkiv.db.hikariDatasource
+import no.nav.henvendelsesarkiv.db.coroutineAwareJdbcTemplate
 import org.flywaydb.core.Flyway
 import org.slf4j.LoggerFactory
 import java.util.*
@@ -41,7 +44,7 @@ fun main() {
 
 private fun runDatabaseMigrationOnStartup() {
     val flyway = Flyway()
-    flyway.dataSource = hikariDatasource
+    flyway.dataSource = coroutineAwareJdbcTemplate.dataSource
     flyway.migrate()
 }
 
@@ -58,10 +61,12 @@ private fun loadEnvironmentFromVault() {
 private fun startKasseringsjobb(timer: Timer) {
     log.info("Starter kasseringsjobb.")
     timer.schedule(FEM_MINUTTER, FEM_MINUTTER) {
-        try {
-            UpdateService().kasserUtgaatteHenvendelser()
-        } catch (e: Exception) {
-            log.error("Kassering feilet, men schedulering må overleve, så dette bare logges", e)
+        GlobalScope.launch {
+            try {
+                UpdateService().kasserUtgaatteHenvendelser()
+            } catch (e: Exception) {
+                log.error("Kassering feilet, men schedulering må overleve, så dette bare logges", e)
+            }
         }
     }
 

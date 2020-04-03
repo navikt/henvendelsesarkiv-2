@@ -9,7 +9,6 @@ import org.springframework.transaction.support.TransactionTemplate
 import java.sql.Timestamp
 import java.time.LocalDateTime
 import java.util.*
-import javax.sql.DataSource
 
 private const val TIMEOUT_FOR_JOBB_TIMER: Long = 4
 
@@ -36,52 +35,41 @@ private const val SKYGGE_OPPDATERING_SQL = """
                 WHERE arkivpostid = ?
             """
 
-class UpdateService constructor(dataSource: DataSource = hikariDatasource, private val useHsql: Boolean = false) {
-    private val jdbcTemplate: JdbcTemplate
-    private val transactionTemplate: TransactionTemplate
-
-    init {
-        val dataSourceTransactionManager = DataSourceTransactionManager(dataSource)
-        jdbcTemplate = JdbcTemplate(dataSourceTransactionManager.dataSource!!)
-        transactionTemplate = TransactionTemplate(dataSourceTransactionManager)
-    }
-
-    fun opprettHenvendelse(arkivpost: Arkivpost): Long {
-        arkivpost.arkivpostId = nextSequenceValue()
-
-        transactionTemplate.execute {
-            opprettArkivpost(arkivpost)
-            arkivpost.vedleggListe.forEach{ vedlegg -> opprettVedlegg(arkivpost.arkivpostId!!, vedlegg) }
+class UpdateService constructor(val jdbcTemplate: CoroutineAwareJdbcTemplate = coroutineAwareJdbcTemplate, private val useHsql: Boolean = false) {
+    suspend fun opprettHenvendelse(arkivpost: Arkivpost): Long {
+        return jdbcTemplate.inTransaction {
+            arkivpost.arkivpostId = nextSequenceValue(this)
+            opprettArkivpost(this, arkivpost)
+            arkivpost.vedleggListe.forEach{ vedlegg -> opprettVedlegg(this, arkivpost.arkivpostId!!, vedlegg) }
+            arkivpost.arkivpostId!!
         }
-
-        return arkivpost.arkivpostId!!
     }
 
-    fun kasserUtgaatteHenvendelser() {
+    suspend fun kasserUtgaatteHenvendelser() {
         val terminereJobb = LocalDateTime.now().plusHours(TIMEOUT_FOR_JOBB_TIMER)
         val sql = "SELECT arkivpostId FROM arkivpost WHERE utgaarDato <= ? AND status != ${addDashes(ArkivStatusType.KASSERT.name)}"
-        val list = jdbcTemplate.queryForList(sql, Long::class.java, Timestamp(System.currentTimeMillis()))
+        val list = jdbcTemplate.use { queryForList(sql, Long::class.java, Timestamp(System.currentTimeMillis())) }
 
         for (arkivpostId in list) {
-            jdbcTemplate.update("UPDATE vedlegg SET dokument = NULL WHERE arkivpostId = ?", arkivpostId)
-            jdbcTemplate.update("UPDATE arkivpost SET status = ? WHERE arkivpostId = ?", ArkivStatusType.KASSERT.name, arkivpostId)
+            jdbcTemplate.use { update("UPDATE vedlegg SET dokument = NULL WHERE arkivpostId = ?", arkivpostId) }
+            jdbcTemplate.use { update("UPDATE arkivpost SET status = ? WHERE arkivpostId = ?", ArkivStatusType.KASSERT.name, arkivpostId) }
             if (LocalDateTime.now().isAfter(terminereJobb)) {
                 break
             }
         }
     }
 
-    fun settUtgaarDato(arkivpostId: Long, dato: LocalDateTime) {
+    suspend fun settUtgaarDato(arkivpostId: Long, dato: LocalDateTime) {
         if (dato.isBefore(LocalDateTime.now())) {
             // Dette er et hint om at dette er en sletting, da skal vi lagre unna vedlegg i egen tabell
             // med 6 måneders angrefrist (gitt av joark-PO)
-            jdbcTemplate.update(SKYGGE_OPPDATERING_SQL, arkivpostId)
+            jdbcTemplate.use { update(SKYGGE_OPPDATERING_SQL, arkivpostId) }
         }
         val sql = "UPDATE arkivpost SET utgaarDato = ? WHERE arkivpostId = ?"
-        jdbcTemplate.update(sql, Timestamp(hentMillisekunder(dato)), arkivpostId)
+        jdbcTemplate.use { update(sql, Timestamp(hentMillisekunder(dato)), arkivpostId) }
     }
 
-    private fun opprettArkivpost(arkivpost: Arkivpost) {
+    private fun opprettArkivpost(jdbcTemplate: JdbcTemplate, arkivpost: Arkivpost) {
         jdbcTemplate.update(ARKIVPOST_SQL) {
             setLong(it, 1, arkivpost.arkivpostId)
             setTimestamp(it, 2, arkivpost.arkivertDato)
@@ -106,7 +94,7 @@ class UpdateService constructor(dataSource: DataSource = hikariDatasource, priva
         }
     }
 
-    private fun opprettVedlegg(arkivpostId: Long, vedlegg: Vedlegg) {
+    private fun opprettVedlegg(jdbcTemplate: JdbcTemplate, arkivpostId: Long, vedlegg: Vedlegg) {
 
         jdbcTemplate.update(VEDLEGG_SQL) {
             setLong(it, 1, arkivpostId)
@@ -120,7 +108,7 @@ class UpdateService constructor(dataSource: DataSource = hikariDatasource, priva
         }
     }
 
-    private fun nextSequenceValue(): Long {
+    private fun nextSequenceValue(jdbcTemplate: JdbcTemplate): Long {
         val sql = if (useHsql) {
             "CALL NEXT VALUE FOR arkivpostId_seq"
         } else {
