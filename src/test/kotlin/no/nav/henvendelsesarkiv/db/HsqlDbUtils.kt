@@ -2,15 +2,16 @@ package no.nav.henvendelsesarkiv.db
 
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.datasource.SingleConnectionDataSource
+import javax.sql.DataSource
 
-fun testJdbcTemplate(): JdbcTemplate {
+fun testDatsource(): DataSource {
     val ds = SingleConnectionDataSource()
     ds.setSuppressClose(true)
     ds.setDriverClassName("org.hsqldb.jdbcDriver")
     ds.url = "jdbc:hsqldb:mem:henvendelsesarkiv"
     ds.username = "user"
     ds.password = ""
-    return JdbcTemplate(ds)
+    return ds
 }
 
 fun createSequence(jt: JdbcTemplate) {
