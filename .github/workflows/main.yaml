@@ -19,7 +19,7 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/build.gradle.kts') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
-        continue-on-error: true
+          continue-on-error: true
       - name: Build
         run:  ./gradlew clean test
 
@@ -35,7 +35,7 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/build.gradle.kts') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
-        continue-on-error: true
+          continue-on-error: true
       - name: Build
         run: ./gradlew clean test fatJar
       - name: Publish Docker image
