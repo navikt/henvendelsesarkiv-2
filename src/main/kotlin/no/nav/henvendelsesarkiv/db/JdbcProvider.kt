@@ -19,7 +19,7 @@ class ConnectionPool private constructor(application: ApplicationProperties) {
         config.jdbcUrl = application.dbUrl
         config.username = application.dbUsername
         config.password = application.dbPassword
-        config.maximumPoolSize = 40
+        config.maximumPoolSize = 100
         config.minimumIdle = 2
         config.connectionTimeout = 1000
         dataSource = HikariDataSource(config)
