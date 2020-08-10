@@ -62,7 +62,7 @@ private fun loadEnvironmentFromVault() {
     if (dbUrl != envValue) {
         log.warn("Mismatch between yaml-file and vault...")
     }
-//    setProperty(HENVENDELSESARKIVDATASOURCE_URL, dbUrl)
+    setProperty(HENVENDELSESARKIVDATASOURCE_URL, dbUrl)
 }
 
 private fun startKasseringsjobb(timer: Timer) {
