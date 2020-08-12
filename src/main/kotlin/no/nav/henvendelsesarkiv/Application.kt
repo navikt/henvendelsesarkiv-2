@@ -56,6 +56,9 @@ private fun loadEnvironmentFromVault() {
     val dbUser = NaisUtils.getCredentials("db_user")
     setProperty(HENVENDELSESARKIVDATASOURCE_USERNAME, dbUser.username)
     setProperty(HENVENDELSESARKIVDATASOURCE_PASSWORD, dbUser.password)
+
+    val dbUrl = NaisUtils.getFileContent("/var/run/secrets/nais.io/db_config/jdbc_url")
+    setProperty(HENVENDELSESARKIVDATASOURCE_URL, dbUrl)
 }
 
 private fun startKasseringsjobb(timer: Timer) {
