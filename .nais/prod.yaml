@@ -36,7 +36,7 @@ spec:
     paths:
     - kvPath: /oracle/data/prod/creds/henvendelsearkiv-user
       mountPath: /var/run/secrets/nais.io/db_user
-    - kvPath: /oracle/data/dev/config/henvendelsearkiv
+    - kvPath: /oracle/data/prod/config/henvendelsearkiv
       mountPath: /var/run/secrets/nais.io/db_config
     - kvPath: /serviceuser/data/prod/srvhenvendelsesarkiv2
       mountPath: /var/run/secrets/nais.io/service_user
