@@ -1,4 +1,4 @@
-FROM navikt/java:8-appdynamics
+FROM navikt/java:11-appdynamics
 
 ARG app_name
 
