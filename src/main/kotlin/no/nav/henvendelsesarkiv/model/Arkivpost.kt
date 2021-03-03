@@ -33,30 +33,26 @@ data class Arkivpost(
 class ArkivpostMapper : RowMapper<Arkivpost> {
     override fun mapRow(rs: ResultSet, rowNum: Int): Arkivpost {
         return Arkivpost(
-                rs.getLong("arkivpostId"),
-                rs.getTimestamp("arkivertDato")?.let { lagDateTime(it.time) },
-                rs.getTimestamp("mottattDato")?.let { lagDateTime(it.time) },
-                rs.getTimestamp("utgaarDato")?.let { lagDateTime(it.time) },
-                rs.getString("temagruppe"),
-                rs.getString("arkivpostType"),
-                rs.getString("dokumentType"),
-                rs.getString("kryssreferanseId"),
-                rs.getString("kanal"),
-                rs.getString("aktoerId"),
-                rs.getString("fodselsnummer"),
-                rs.getString("navIdent"),
-                rs.getString("innhold"),
-                rs.getString("journalfoerendeEnhet"),
-                rs.getString("status"),
-                rs.getString("kategorikode"),
-                boolverdi(rs.getInt("signert")),
-                boolverdi(rs.getInt("erOrganInternt")),
-                boolverdi(rs.getInt("begrensetPartInnsyn")),
-                boolverdi(rs.getInt("sensitiv"))
+            rs.getLong("arkivpostId"),
+            rs.getTimestamp("arkivertDato")?.let { lagDateTime(it.time) },
+            rs.getTimestamp("mottattDato")?.let { lagDateTime(it.time) },
+            rs.getTimestamp("utgaarDato")?.let { lagDateTime(it.time) },
+            rs.getString("temagruppe"),
+            rs.getString("arkivpostType"),
+            rs.getString("dokumentType"),
+            rs.getString("kryssreferanseId"),
+            rs.getString("kanal"),
+            rs.getString("aktoerId"),
+            rs.getString("fodselsnummer"),
+            rs.getString("navIdent"),
+            rs.getString("innhold"),
+            rs.getString("journalfoerendeEnhet"),
+            rs.getString("status"),
+            rs.getString("kategorikode"),
+            boolverdi(rs.getInt("signert")),
+            boolverdi(rs.getInt("erOrganInternt")),
+            boolverdi(rs.getInt("begrensetPartInnsyn")),
+            boolverdi(rs.getInt("sensitiv"))
         )
     }
 }
-
-
-
-

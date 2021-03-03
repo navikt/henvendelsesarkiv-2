@@ -6,20 +6,19 @@ import java.sql.Timestamp
 import java.sql.Types
 import java.time.Instant
 import java.time.LocalDateTime
-import java.util.*
 import java.time.format.DateTimeFormatter
-
+import java.util.*
 
 private val formatter = DateTimeFormatter.ISO_DATE_TIME
 
 fun lagDateTime(ts: Long): LocalDateTime =
-        LocalDateTime.ofInstant(Instant.ofEpochMilli(ts), TimeZone.getDefault().toZoneId())
+    LocalDateTime.ofInstant(Instant.ofEpochMilli(ts), TimeZone.getDefault().toZoneId())
 
 fun lagDateTime(str: String): LocalDateTime =
-        LocalDateTime.parse(str, formatter)
+    LocalDateTime.parse(str, formatter)
 
 fun hentMillisekunder(ldt: LocalDateTime): Long =
-        ldt.atZone(TimeZone.getDefault().toZoneId()).toInstant().toEpochMilli()
+    ldt.atZone(TimeZone.getDefault().toZoneId()).toInstant().toEpochMilli()
 
 fun boolverdi(n: Int): Boolean = n == 1
 

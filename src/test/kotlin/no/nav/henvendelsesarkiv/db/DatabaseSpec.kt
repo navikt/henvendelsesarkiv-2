@@ -21,7 +21,6 @@ fun TestContainer.cit(description: String, body: suspend TestBody.() -> Unit) {
     this.it(description) { runBlocking { body() } }
 }
 
-
 object DatabaseSpec : Spek({
     lateinit var jt: JdbcTemplate
     lateinit var selectService: SelectService
@@ -42,7 +41,7 @@ object DatabaseSpec : Spek({
         }
 
         given("SelectService exists") {
-            on ("sjekk database") {
+            on("sjekk database") {
                 cit("should give ok") {
                     updateService.opprettHenvendelse(lagTomArkivpost())
                     val melding = selectService.sjekkDatabase()
@@ -163,49 +162,49 @@ object DatabaseSpec : Spek({
 
 private fun lagTomArkivpost(plusstimer: Long = 0): Arkivpost {
     return Arkivpost(
-            arkivertDato = LocalDateTime.now().plusHours(plusstimer),
-            mottattDato = LocalDateTime.now().plusHours(plusstimer),
-            utgaarDato = LocalDateTime.now().plusHours(plusstimer),
-            temagruppe = "TEMAGRUPPE1",
-            arkivpostType = "ARKIVPOSTTYPE1",
-            dokumentType = "DOKUMENTTYPE1",
-            kryssreferanseId = "KRYSSREFID1",
-            kanal = "KANAL1",
-            aktoerId = "AKTØRID1",
-            fodselsnummer = "FØDSELSNUMMER1",
-            navIdent = "NAVIDENT1",
-            innhold = "INNHOLD1",
-            journalfoerendeEnhet = "JOURNALFØRENDEENHET1",
-            status = "ARKIVERT",
-            kategorikode = "KATEGORIKODE1",
-            signert = true,
-            erOrganInternt = true,
-            begrensetPartInnsyn = false,
-            sensitiv = true
+        arkivertDato = LocalDateTime.now().plusHours(plusstimer),
+        mottattDato = LocalDateTime.now().plusHours(plusstimer),
+        utgaarDato = LocalDateTime.now().plusHours(plusstimer),
+        temagruppe = "TEMAGRUPPE1",
+        arkivpostType = "ARKIVPOSTTYPE1",
+        dokumentType = "DOKUMENTTYPE1",
+        kryssreferanseId = "KRYSSREFID1",
+        kanal = "KANAL1",
+        aktoerId = "AKTØRID1",
+        fodselsnummer = "FØDSELSNUMMER1",
+        navIdent = "NAVIDENT1",
+        innhold = "INNHOLD1",
+        journalfoerendeEnhet = "JOURNALFØRENDEENHET1",
+        status = "ARKIVERT",
+        kategorikode = "KATEGORIKODE1",
+        signert = true,
+        erOrganInternt = true,
+        begrensetPartInnsyn = false,
+        sensitiv = true
     )
 }
 
 private fun lagArkivpostMedVedlegg(plusstimer: Long = 0): Arkivpost {
     val arkivpost = Arkivpost(
-            arkivertDato = LocalDateTime.now().plusHours(plusstimer),
-            mottattDato = LocalDateTime.now().plusHours(plusstimer),
-            utgaarDato = LocalDateTime.now().plusHours(plusstimer),
-            temagruppe = "TEMAGRUPPE1",
-            arkivpostType = "ARKIVPOSTTYPE1",
-            dokumentType = "DOKUMENTTYPE1",
-            kryssreferanseId = "KRYSSREFID1",
-            kanal = "KANAL1",
-            aktoerId = "AKTØRID1",
-            fodselsnummer = "FØDSELSNUMMER1",
-            navIdent = "NAVIDENT1",
-            innhold = "INNHOLD1",
-            journalfoerendeEnhet = "JOURNALFØRENDEENHET1",
-            status = "ARKIVERT",
-            kategorikode = "KATEGORIKODE1",
-            signert = true,
-            erOrganInternt = true,
-            begrensetPartInnsyn = false,
-            sensitiv = true
+        arkivertDato = LocalDateTime.now().plusHours(plusstimer),
+        mottattDato = LocalDateTime.now().plusHours(plusstimer),
+        utgaarDato = LocalDateTime.now().plusHours(plusstimer),
+        temagruppe = "TEMAGRUPPE1",
+        arkivpostType = "ARKIVPOSTTYPE1",
+        dokumentType = "DOKUMENTTYPE1",
+        kryssreferanseId = "KRYSSREFID1",
+        kanal = "KANAL1",
+        aktoerId = "AKTØRID1",
+        fodselsnummer = "FØDSELSNUMMER1",
+        navIdent = "NAVIDENT1",
+        innhold = "INNHOLD1",
+        journalfoerendeEnhet = "JOURNALFØRENDEENHET1",
+        status = "ARKIVERT",
+        kategorikode = "KATEGORIKODE1",
+        signert = true,
+        erOrganInternt = true,
+        begrensetPartInnsyn = false,
+        sensitiv = true
     )
 
     arkivpost.vedleggListe.add(lagVedlegg(1))
@@ -216,38 +215,39 @@ private fun lagArkivpostMedVedlegg(plusstimer: Long = 0): Arkivpost {
 
 private fun lagVedlegg(arkivpostId: Long): Vedlegg {
     return Vedlegg(
-            arkivpostId,
-            "FILNAVN",
-            "FILTYPE",
-            "VARIANT",
-            "TITTEL",
-            "BREVKODE",
-            true,
-            Base64.getEncoder().encodeToString("DOKUMENT".toByteArray())
+        arkivpostId,
+        "FILNAVN",
+        "FILTYPE",
+        "VARIANT",
+        "TITTEL",
+        "BREVKODE",
+        true,
+        Base64.getEncoder().encodeToString("DOKUMENT".toByteArray())
     )
 }
 
 private fun lagTomArkivpostIFortiden(): Arkivpost {
     val arkivpost = Arkivpost(
-            arkivertDato = LocalDateTime.now().minusHours(1),
-            mottattDato = LocalDateTime.now().minusHours(1),
-            utgaarDato = LocalDateTime.now().minusHours(1),
-            temagruppe = "TEMAGRUPPE1",
-            arkivpostType = "ARKIVPOSTTYPE1",
-            dokumentType = "DOKUMENTTYPE1",
-            kryssreferanseId = "KRYSSREFID1",
-            kanal = "KANAL1",
-            aktoerId = "AKTØRID1",
-            fodselsnummer = "FØDSELSNUMMER1",
-            navIdent = "NAVIDENT1",
-            innhold = "INNHOLD1",
-            journalfoerendeEnhet = "JOURNALFØRENDEENHET1",
-            status = "ARKIVERT",
-            kategorikode = "KATEGORIKODE1",
-            signert = true,
-            erOrganInternt = true,
-            begrensetPartInnsyn = false,
-            sensitiv = true)
+        arkivertDato = LocalDateTime.now().minusHours(1),
+        mottattDato = LocalDateTime.now().minusHours(1),
+        utgaarDato = LocalDateTime.now().minusHours(1),
+        temagruppe = "TEMAGRUPPE1",
+        arkivpostType = "ARKIVPOSTTYPE1",
+        dokumentType = "DOKUMENTTYPE1",
+        kryssreferanseId = "KRYSSREFID1",
+        kanal = "KANAL1",
+        aktoerId = "AKTØRID1",
+        fodselsnummer = "FØDSELSNUMMER1",
+        navIdent = "NAVIDENT1",
+        innhold = "INNHOLD1",
+        journalfoerendeEnhet = "JOURNALFØRENDEENHET1",
+        status = "ARKIVERT",
+        kategorikode = "KATEGORIKODE1",
+        signert = true,
+        erOrganInternt = true,
+        begrensetPartInnsyn = false,
+        sensitiv = true
+    )
 
     arkivpost.vedleggListe.add(lagVedlegg(1))
     arkivpost.vedleggListe.add(lagVedlegg(1))

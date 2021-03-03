@@ -8,7 +8,6 @@ import no.nav.henvendelsesarkiv.ApplicationProperties
 import no.nav.henvendelsesarkiv.SingletonHolder
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.datasource.DataSourceTransactionManager
-import org.springframework.transaction.support.TransactionCallback
 import org.springframework.transaction.support.TransactionTemplate
 import javax.sql.DataSource
 
@@ -36,16 +35,16 @@ class CoroutineAwareJdbcTemplate(val dataSource: DataSource) {
     internal val jdbcTemplate = JdbcTemplate(dataSource)
 
     suspend fun <T> use(block: JdbcTemplate.() -> T): T =
-            withContext(Dispatchers.IO) {
-                block(jdbcTemplate)
-            }
+        withContext(Dispatchers.IO) {
+            block(jdbcTemplate)
+        }
 
     suspend fun <T> inTransaction(block: JdbcTemplate.() -> T): T =
-            withContext(Dispatchers.IO) {
-                transactionTemplate.execute {
-                    block(jdbcTemplate)
-                }!!
-            }
+        withContext(Dispatchers.IO) {
+            transactionTemplate.execute {
+                block(jdbcTemplate)
+            }!!
+        }
 }
 
 val coroutineAwareJdbcTemplate = CoroutineAwareJdbcTemplate(hikariDatasource)
