@@ -31,4 +31,4 @@ fun setProperty(property: PropertyNames, value: String) {
 }
 
 fun getProperty(property: PropertyNames, default: String? = null): String =
-        System.getenv(property.name) ?: System.getProperty(property.name) ?: default ?: throw RuntimeException("Missing variable $property")
+    System.getenv(property.name) ?: System.getProperty(property.name) ?: default ?: throw RuntimeException("Missing variable $property")

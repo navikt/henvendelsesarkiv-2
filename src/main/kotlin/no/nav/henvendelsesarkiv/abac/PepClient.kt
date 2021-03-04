@@ -5,13 +5,11 @@ import io.ktor.client.HttpClient
 import io.ktor.client.engine.apache.Apache
 import io.ktor.client.features.auth.basic.BasicAuth
 import io.ktor.client.request.post
-import io.ktor.client.request.request
 import io.ktor.client.response.HttpResponse
 import io.ktor.client.response.readText
 import io.ktor.http.ContentType
 import io.ktor.http.content.TextContent
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import no.nav.henvendelsesarkiv.ApplicationProperties
 
@@ -37,7 +35,7 @@ class PepClient(private val applicationProperties: ApplicationProperties, privat
         return hasAccessToResource(extractBodyFromOidcToken(token), method, action)
     }
 
-    private suspend fun hasAccessToResource(oidcTokenBody: String, method:String, action: String): Boolean {
+    private suspend fun hasAccessToResource(oidcTokenBody: String, method: String, action: String): Boolean {
         val cachedResponse = abacCache.hasAccess(oidcTokenBody, method, action)
         if (cachedResponse != null) {
             return cachedResponse
@@ -64,22 +62,18 @@ class PepClient(private val applicationProperties: ApplicationProperties, privat
     }
 
     private fun createRequestWithDefaultHeaders(oidcTokenBody: String, action: String): XacmlRequestBuilder =
-            XacmlRequestBuilder()
-                .addEnvironmentAttribute(ENVIRONMENT_OIDC_TOKEN_BODY, oidcTokenBody)
-                .addEnvironmentAttribute(ENVIRONMENT_PEP_ID, PEP_ID)
-                .addResourceAttribute(RESOURCE_DOMENE, DOMENE)
-                .addActionAttribute(ACTION_ID, action)
-
+        XacmlRequestBuilder()
+            .addEnvironmentAttribute(ENVIRONMENT_OIDC_TOKEN_BODY, oidcTokenBody)
+            .addEnvironmentAttribute(ENVIRONMENT_PEP_ID, PEP_ID)
+            .addResourceAttribute(RESOURCE_DOMENE, DOMENE)
+            .addActionAttribute(ACTION_ID, action)
 
     private fun createBiasedDecision(decision: Decision): Decision =
-            when (decision) {
-                Decision.NotApplicable, Decision.Indeterminate -> bias
-                else -> decision
-            }
-
-
+        when (decision) {
+            Decision.NotApplicable, Decision.Indeterminate -> bias
+            else -> decision
+        }
 
     private fun extractBodyFromOidcToken(token: String): String =
-            token.substringAfter(".").substringBefore(".")
-
+        token.substringAfter(".").substringBefore(".")
 }

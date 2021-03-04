@@ -23,9 +23,9 @@ data class CategoryAttribute(
 )
 
 data class CAttribute(
-        @SerializedName("AttributeId") val attributeId: String,
-        @SerializedName("Value") val value: Any
-        )
+    @SerializedName("AttributeId") val attributeId: String,
+    @SerializedName("Value") val value: Any
+)
 
 class XacmlRequestBuilder {
     private val requestAttributes = HashMap<Category, CategoryAttribute>()

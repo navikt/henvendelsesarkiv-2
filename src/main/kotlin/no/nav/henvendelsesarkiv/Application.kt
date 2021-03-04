@@ -1,6 +1,5 @@
 package no.nav.henvendelsesarkiv
 
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import no.nav.common.nais.utils.NaisUtils
@@ -17,9 +16,9 @@ private const val FEM_MINUTTER: Long = 1000 * 60 * 5
 private val log = LoggerFactory.getLogger("henvendelsesarkiv.Application")
 
 data class ApplicationState(
-        val properties: ApplicationProperties,
-        var running: Boolean = true,
-        var initialized: Boolean = false
+    val properties: ApplicationProperties,
+    var running: Boolean = true,
+    var initialized: Boolean = false
 )
 
 fun main() {
@@ -30,12 +29,14 @@ fun main() {
     val applicationServer = createHttpServer(applicationState = applicationState)
     val kasseringstimer = Timer()
 
-    Runtime.getRuntime().addShutdownHook(Thread {
-        log.info("Shutdown hook called, shutting down gracefully")
-        kasseringstimer.cancel()
-        applicationState.initialized = false
-        applicationServer.stop(10, 15, TimeUnit.SECONDS)
-    })
+    Runtime.getRuntime().addShutdownHook(
+        Thread {
+            log.info("Shutdown hook called, shutting down gracefully")
+            kasseringstimer.cancel()
+            applicationState.initialized = false
+            applicationServer.stop(10, 15, TimeUnit.SECONDS)
+        }
+    )
 
     startKasseringsjobb(kasseringstimer)
 
@@ -72,5 +73,4 @@ private fun startKasseringsjobb(timer: Timer) {
             }
         }
     }
-
 }

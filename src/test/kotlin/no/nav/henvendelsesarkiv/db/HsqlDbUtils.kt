@@ -21,7 +21,8 @@ fun createSequence(jt: JdbcTemplate) {
 
 fun createArkivpostTable(jt: JdbcTemplate) {
     jt.execute("DROP TABLE arkivpost IF EXISTS")
-    jt.execute("""
+    jt.execute(
+        """
         CREATE TABLE arkivpost (
             arkivpostId NUMERIC NOT NULL,
             arkivertDato TIMESTAMP,
@@ -44,12 +45,14 @@ fun createArkivpostTable(jt: JdbcTemplate) {
             begrensetPartInnsyn NUMERIC,
             sensitiv NUMERIC
         )
-    """.trimIndent())
+        """.trimIndent()
+    )
 }
 
 fun createVedleggTable(jt: JdbcTemplate) {
     jt.execute("DROP TABLE vedlegg IF EXISTS")
-    jt.execute("""
+    jt.execute(
+        """
         CREATE TABLE vedlegg (
             arkivpostId NUMERIC NOT NULL,
             filnavn VARCHAR(255),
@@ -60,5 +63,6 @@ fun createVedleggTable(jt: JdbcTemplate) {
             strukturert NUMERIC,
             dokument BLOB
         )
-    """.trimIndent())
+        """.trimIndent()
+    )
 }

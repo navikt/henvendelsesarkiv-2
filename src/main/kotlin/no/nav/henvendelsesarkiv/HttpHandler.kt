@@ -25,11 +25,10 @@ import java.time.LocalDateTime
 
 private const val REALM = "Henvendelsesarkiv JWT Realm"
 
-
 fun createHttpServer(applicationState: ApplicationState, port: Int = 8080): ApplicationEngine = embeddedServer(Netty, port) {
     val pepClient = PepClient(
-            applicationProperties = applicationState.properties,
-            bias = Decision.Deny
+        applicationProperties = applicationState.properties,
+        bias = Decision.Deny
     )
     install(StatusPages) {
         notFoundHandler()

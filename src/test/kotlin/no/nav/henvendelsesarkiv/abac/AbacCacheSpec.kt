@@ -12,7 +12,7 @@ private const val OIDC_TOKEN = "ewogICJzdWIiOiAidGVzdHVzZXIiLAogICJ2ZXIiOiAiMS4w
 
 object AbacCacheSpec : Spek({
     describe("An ABAC cache") {
-       lateinit var cache: AbacCache
+        lateinit var cache: AbacCache
 
         given("Cache initialized") {
             on("Cache with one entry") {

@@ -11,9 +11,11 @@ import io.prometheus.client.CollectorRegistry
 import io.prometheus.client.exporter.common.TextFormat
 import no.nav.henvendelsesarkiv.db.SelectService
 
-fun Routing.naisRoutes(readinessCheck: () -> Boolean,
-                       livenessCheck: () -> Boolean = { true },
-                       collectorRegistry: CollectorRegistry = CollectorRegistry.defaultRegistry) {
+fun Routing.naisRoutes(
+    readinessCheck: () -> Boolean,
+    livenessCheck: () -> Boolean = { true },
+    collectorRegistry: CollectorRegistry = CollectorRegistry.defaultRegistry
+) {
 
     get("/isAlive") {
         if (livenessCheck()) {
@@ -41,5 +43,4 @@ fun Routing.naisRoutes(readinessCheck: () -> Boolean,
     get("/internal/selftest") {
         call.respondText(SelectService().sjekkDatabase())
     }
-
 }
