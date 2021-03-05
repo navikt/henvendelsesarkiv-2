@@ -11,16 +11,15 @@ private val logger = LoggerFactory.getLogger(SelectService::class.java)
 
 class SelectService constructor(val jt: CoroutineAwareJdbcTemplate = coroutineAwareJdbcTemplate) {
     suspend fun sjekkDatabase(): String =
-            try {
-                jt.use {
-                    queryForObject("SELECT COUNT(1) FROM arkivpost", Integer::class.java)
-                }
-                "OK"
-            } catch (e: Exception) {
-                logger.error("Klarte ikke å koble opp mot database", e)
-                e.message ?: "Feil, ingen feilmelding gitt"
+        try {
+            jt.use {
+                queryForObject("SELECT COUNT(1) FROM arkivpost", Integer::class.java)
             }
-
+            "OK"
+        } catch (e: Exception) {
+            logger.error("Klarte ikke å koble opp mot database", e)
+            e.message ?: "Feil, ingen feilmelding gitt"
+        }
 
     suspend fun hentHenvendelse(id: Long): Arkivpost? {
         val arkivpostSql = "SELECT * FROM arkivpost WHERE arkivpostId = ?"
@@ -44,11 +43,14 @@ class SelectService constructor(val jt: CoroutineAwareJdbcTemplate = coroutineAw
     suspend fun hentHenvendelserForAktoer(aktoerId: String, fra: LocalDateTime?, til: LocalDateTime?, max: Int?): List<Arkivpost> {
         val fraTekst = fra?.let { " AND mottattDato >= ? " } ?: ""
         val tilTekst = til?.let { " AND mottattDato <= ? " } ?: ""
-        val sql = wrapInMax("""
+        val sql = wrapInMax(
+            """
             SELECT * FROM arkivpost WHERE aktoerId = ?
             $fraTekst $tilTekst
             ORDER BY mottattDato DESC
-        """.trimIndent(), max)
+            """.trimIndent(),
+            max
+        )
 
         val arkivposter = jt.use {
             query(sql, setParams(aktoerId, fra, til), ArkivpostMapper())
@@ -58,7 +60,7 @@ class SelectService constructor(val jt: CoroutineAwareJdbcTemplate = coroutineAw
     }
 
     private fun wrapInMax(sql: String, max: Int?): String = max?.let { "SELECT * FROM ($sql) WHERE ROWNUM <= $it" }
-            ?: sql
+        ?: sql
 
     private fun setParams(aktoerId: String, fra: LocalDateTime?, til: LocalDateTime?): PreparedStatementSetter {
         var i = 1

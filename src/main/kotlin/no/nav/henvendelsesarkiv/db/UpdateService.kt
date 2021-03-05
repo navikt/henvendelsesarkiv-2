@@ -4,8 +4,6 @@ import no.nav.henvendelsesarkiv.model.ArkivStatusType
 import no.nav.henvendelsesarkiv.model.Arkivpost
 import no.nav.henvendelsesarkiv.model.Vedlegg
 import org.springframework.jdbc.core.JdbcTemplate
-import org.springframework.jdbc.datasource.DataSourceTransactionManager
-import org.springframework.transaction.support.TransactionTemplate
 import java.sql.Timestamp
 import java.time.LocalDateTime
 import java.util.*
@@ -40,7 +38,7 @@ class UpdateService constructor(val jdbcTemplate: CoroutineAwareJdbcTemplate = c
         return jdbcTemplate.inTransaction {
             arkivpost.arkivpostId = nextSequenceValue(this)
             opprettArkivpost(this, arkivpost)
-            arkivpost.vedleggListe.forEach{ vedlegg -> opprettVedlegg(this, arkivpost.arkivpostId!!, vedlegg) }
+            arkivpost.vedleggListe.forEach { vedlegg -> opprettVedlegg(this, arkivpost.arkivpostId!!, vedlegg) }
             arkivpost.arkivpostId!!
         }
     }

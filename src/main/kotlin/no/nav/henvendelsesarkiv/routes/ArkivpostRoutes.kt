@@ -91,7 +91,7 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.settUtgaarDato() {
         UpdateService().settUtgaarDato(arkivpostId, utgaarDato)
         call.respond(HttpStatusCode.OK)
     }
-    //TODO: Burde det kastes 500-feil om den kommer hit? Gjelder kanskje flere tjenestekall?
+    // TODO: Burde det kastes 500-feil om den kommer hit? Gjelder kanskje flere tjenestekall?
 }
 
 private suspend fun PipelineContext<Unit, ApplicationCall>.hentArkivpostForAktoer() {

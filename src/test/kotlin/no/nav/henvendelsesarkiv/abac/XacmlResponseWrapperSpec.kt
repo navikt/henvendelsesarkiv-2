@@ -25,9 +25,7 @@ object XacmlResponseWrapperSpec : Spek({
                     wrapper.getDecision() `should equal` Decision.Deny
                 }
             }
-
         }
-
     }
 })
 

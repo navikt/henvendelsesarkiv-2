@@ -34,8 +34,8 @@ class AbacCache(private val cacheExpiry: Int = EXPIRY_FIVE_MINUTES) {
     }
 
     private fun cacheEntryExpired(cacheValue: AbacCacheValue): Boolean =
-            (System.currentTimeMillis() - cacheValue.timestamp) > cacheExpiry
+        (System.currentTimeMillis() - cacheValue.timestamp) > cacheExpiry
 
     private fun extractSubjectFromToken(token: String): String =
-            gson.fromJson(String(Base64.getDecoder().decode(token)), JsonObject::class.java).get("sub").toString()
+        gson.fromJson(String(Base64.getDecoder().decode(token)), JsonObject::class.java).get("sub").toString()
 }
