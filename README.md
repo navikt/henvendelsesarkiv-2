@@ -40,9 +40,10 @@ Kjør så `./gradlew -Dflyway.configFiles=flyway_config/flyway_q6.conf flywayMig
 
 Spørsmål knyttet til koden eller prosjektet kan rettes mot:
 
-* Daniel Winsvold, daniel.winsvold@nav.no
+* Nicklas Utgaard
 * Jan-Eirik B. Nævdal, jan.eirik.b.navdal@nav.no
-* Jørund Amsen, jorund.amsen@nav.no
+* Andreas Bergman
+* Ankur Tade
 * Richard Borge, richard.borge@nav.no
 
 ### For NAV-ansatte
