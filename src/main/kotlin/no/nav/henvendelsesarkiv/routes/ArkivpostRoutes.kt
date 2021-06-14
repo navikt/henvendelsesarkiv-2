@@ -4,14 +4,14 @@ import io.ktor.application.ApplicationCall
 import io.ktor.application.call
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.Parameters
-import io.ktor.request.header
 import io.ktor.request.receive
 import io.ktor.response.respond
 import io.ktor.routing.Route
 import io.ktor.routing.get
 import io.ktor.routing.post
 import io.ktor.util.pipeline.PipelineContext
-import no.nav.henvendelsesarkiv.abac.PepClient
+import no.nav.henvendelsesarkiv.abac.Pep
+import no.nav.henvendelsesarkiv.abac.withAccess
 import no.nav.henvendelsesarkiv.db.SelectService
 import no.nav.henvendelsesarkiv.db.UpdateService
 import no.nav.henvendelsesarkiv.db.lagDateTime
@@ -20,40 +20,40 @@ import org.slf4j.LoggerFactory
 
 private val log = LoggerFactory.getLogger("henvendelsesarkiv.ArkivpostRoutes")
 
-fun Route.arkivpostRoutes(pepClient: PepClient) {
+fun Route.arkivpostRoutes() {
     get("/arkivpost/{arkivpostId}") {
-        if (!pepClient.checkAccess(call.request.header("Authorization"), "hentArkivpost", "read"))
-            call.respond(HttpStatusCode.Forbidden)
-        hentArkivpost()
+        withAccess(Pep.Action.READ) {
+            hentArkivpost()
+        }
     }
 
     get("/temagrupper/{aktørId}") {
-        if (!pepClient.checkAccess(call.request.header("Authorization"), "hentTemagrupper", "read"))
-            call.respond(HttpStatusCode.Forbidden)
-        hentTemagrupper()
+        withAccess(Pep.Action.READ) {
+            hentTemagrupper()
+        }
     }
 
     get("/arkivpost/aktoer/{aktørId}") {
-        if (!pepClient.checkAccess(call.request.header("Authorization"), "hentArkivpostForAktør", "read"))
-            call.respond(HttpStatusCode.Forbidden)
-        hentArkivpostForAktoer()
+        withAccess(Pep.Action.READ) {
+            hentArkivpostForAktoer()
+        }
     }
 
     post("/arkivpost") {
-        if (!pepClient.checkAccess(call.request.header("Authorization"), "opprettArkivpost", "create"))
-            call.respond(HttpStatusCode.Forbidden)
-        val arkivpost: Arkivpost = call.receive()
-        val arkivpostId = UpdateService().opprettHenvendelse(arkivpost)
-        call.respond(arkivpostId)
+        withAccess(Pep.Action.CREATE) {
+            val arkivpost: Arkivpost = call.receive()
+            val arkivpostId = UpdateService().opprettHenvendelse(arkivpost)
+            call.respond(arkivpostId)
+        }
     }
 
     post("/arkivpost/{arkivpostId}/utgaar") {
-        if (!pepClient.checkAccess(call.request.header("Authorization"), "settUtgårDato", "update"))
-            call.respond(HttpStatusCode.Forbidden)
-        try {
-            settUtgaarDato()
-        } catch (e: Throwable) {
-            log.error("Feil i utgår dato", e)
+        withAccess(Pep.Action.UPDATE) {
+            try {
+                settUtgaarDato()
+            } catch (e: Throwable) {
+                log.error("Feil i utgår dato", e)
+            }
         }
     }
 }

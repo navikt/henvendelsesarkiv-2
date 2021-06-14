@@ -49,8 +49,6 @@ spec:
       value: "{{ version }}"
     - name: APP_ENVIRONMENT
       value: "{{ namespace }}"
-    - name: ABAC_PDP_ENDPOINT_URL
-      value: "https://wasapp-{{ namespace }}.adeo.no/asm-pdp/authorize"
     - name: SECURITY_TOKEN_SERVICE_JWKS_URL
       value: "https://security-token-service.nais.preprod.local/rest/v1/sts/jwks"
     - name: SECURITY_TOKEN_SERVICE_ISSUER_URL

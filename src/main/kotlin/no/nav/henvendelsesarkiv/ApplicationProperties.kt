@@ -6,9 +6,6 @@ class ApplicationProperties {
     val dbUrl: String = getProperty(PropertyNames.HENVENDELSESARKIVDATASOURCE_URL)
     val dbUsername: String = getProperty(PropertyNames.HENVENDELSESARKIVDATASOURCE_USERNAME)
     val dbPassword: String = getProperty(PropertyNames.HENVENDELSESARKIVDATASOURCE_PASSWORD)
-    val abacEndpoint: String = getProperty(PropertyNames.ABAC_PDP_ENDPOINT_URL)
-    val abacUser: String = getProperty(PropertyNames.SRVHENVENDELSESARKIV2_USERNAME)
-    val abacPass: String = getProperty(PropertyNames.SRVHENVENDELSESARKIV2_PASSWORD)
     val jwksUrl: String = getProperty(PropertyNames.SECURITY_TOKEN_SERVICE_JWKS_URL)
     val jwtIssuer: String = getProperty(PropertyNames.SECURITY_TOKEN_SERVICE_ISSUER_URL)
 }
@@ -19,7 +16,6 @@ enum class PropertyNames {
     HENVENDELSESARKIVDATASOURCE_URL,
     HENVENDELSESARKIVDATASOURCE_USERNAME,
     HENVENDELSESARKIVDATASOURCE_PASSWORD,
-    ABAC_PDP_ENDPOINT_URL,
     SRVHENVENDELSESARKIV2_USERNAME,
     SRVHENVENDELSESARKIV2_PASSWORD,
     SECURITY_TOKEN_SERVICE_JWKS_URL,
