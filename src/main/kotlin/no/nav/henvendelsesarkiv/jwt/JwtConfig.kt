@@ -4,7 +4,6 @@ import com.auth0.jwk.JwkProvider
 import com.auth0.jwk.JwkProviderBuilder
 import io.ktor.auth.Principal
 import io.ktor.auth.jwt.JWTCredential
-import io.ktor.auth.jwt.JWTPrincipal
 import no.nav.henvendelsesarkiv.ApplicationProperties
 import org.slf4j.LoggerFactory
 import java.lang.Exception
@@ -12,6 +11,8 @@ import java.net.URL
 import java.util.concurrent.TimeUnit
 
 private val log = LoggerFactory.getLogger("henvendelsesarkiv.JwtConfig")
+
+class SubjectPrincipal(val subject: String) : Principal
 
 class JwtConfig(applicationProperties: ApplicationProperties) {
 
@@ -23,7 +24,7 @@ class JwtConfig(applicationProperties: ApplicationProperties) {
     fun validate(credentials: JWTCredential): Principal? {
         return try {
             requireNotNull(credentials.payload.audience) { "Audience not present" }
-            JWTPrincipal(credentials.payload)
+            SubjectPrincipal(credentials.payload.subject)
         } catch (e: Exception) {
             log.error("Failed to validate token", e)
             null

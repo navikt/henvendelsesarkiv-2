@@ -13,8 +13,6 @@ import io.ktor.routing.routing
 import io.ktor.server.engine.ApplicationEngine
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
-import no.nav.henvendelsesarkiv.abac.Decision
-import no.nav.henvendelsesarkiv.abac.PepClient
 import no.nav.henvendelsesarkiv.db.localDateTimeDeserializer
 import no.nav.henvendelsesarkiv.db.localDateTimeSerializer
 import no.nav.henvendelsesarkiv.jwt.JwtConfig
@@ -26,10 +24,6 @@ import java.time.LocalDateTime
 private const val REALM = "Henvendelsesarkiv JWT Realm"
 
 fun createHttpServer(applicationState: ApplicationState, port: Int = 8080): ApplicationEngine = embeddedServer(Netty, port) {
-    val pepClient = PepClient(
-        applicationProperties = applicationState.properties,
-        bias = Decision.Deny
-    )
     install(StatusPages) {
         notFoundHandler()
         exceptionHandler()
@@ -65,7 +59,7 @@ fun createHttpServer(applicationState: ApplicationState, port: Int = 8080): Appl
         naisRoutes(readinessCheck = { applicationState.initialized }, livenessCheck = { applicationState.running })
 
         authenticate {
-            arkivpostRoutes(pepClient)
+            arkivpostRoutes()
         }
     }
     applicationState.initialized = true
